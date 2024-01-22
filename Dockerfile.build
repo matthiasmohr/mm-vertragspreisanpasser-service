@@ -1,0 +1,49 @@
+# syntax = docker/dockerfile:1.2
+
+## Start the definition of our build stage
+FROM golang:1-alpine AS builder
+
+## Install some needed tools
+RUN apk --no-cache add openssh git
+RUN go get -u github.com/swaggo/swag/cmd/swag
+
+## Do some prep work
+RUN mkdir -p ~/.ssh
+RUN touch ~/.ssh/known_hosts
+RUN ssh-keyscan -T 60 github.com >> ~/.ssh/known_hosts
+
+## We don't want evil Google to know about our super secret codebase
+ENV GOSUMDB=off
+ENV GOPROXY=direct
+ENV GOPRIVATE=github.com/enercity/*
+
+## Tell git / go to access our repo via ssh instead of https
+RUN git config --global url."git@github.com:enercity".insteadOf "https://github.com/enercity"
+
+## As booking uses Go Modules we can't stay in $GOPATH
+WORKDIR /app
+RUN mkdir dist
+
+## Cache our dependencies
+ADD go.mod go.mod
+RUN --mount=type=ssh go mod download
+
+## Of course we'll add the sources
+ADD . .
+
+RUN swag init -g pkg/server/echo.go -output api/openapi/docs
+RUN go build -ldflags "-X main.version=$version -X main.buildDate=$buildDate -X main.commitHash=$commitHash -X main.commitDate=$commitDate" -o ./dist/app ./ 
+
+##### Now let some multi stage magic happen ✨ 🎩 🎉
+
+## Start a new image to drop sources and dependencies that are not needed anymore to save some bytes
+FROM alpine
+
+## Don't run as root if you don't need to
+USER nobody
+
+## Get the binary and other stuff from the previous build stage
+COPY --from=builder --chown=nobody /app/dist/app /app
+
+## Define our binary as entrypoint
+ENTRYPOINT [ "/app" ]

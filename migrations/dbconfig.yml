@@ -1,0 +1,17 @@
+development:
+  dialect: postgres
+  datasource: host=${CLUSTER_WRITER_ADDRESS} dbname=customer user=customer password=${MASTER_PASSWORD} sslmode=disable
+  dir: .
+  table: migrations
+
+integration_test:
+  dialect: postgres
+  datasource: host=localhost dbname=customer user=customer password=password sslmode=disable
+  dir: .
+  table: migrations
+
+local:
+  dialect: postgres
+  datasource: host=${CUSTOMER_DATABASE_HOST} dbname=customer user=customer password=password sslmode=disable
+  dir: .
+  table: migrations

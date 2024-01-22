@@ -1,0 +1,159 @@
+openapi: 3.0.1
+info:
+  title: Common Service Endpoints
+  description: "This document defines common endpoints for version and build information, service readiness and healthiness."
+  license:
+    name: commercial
+  version: 2.0.0
+externalDocs:
+  description: LYNQTECH Conventions
+  url: https://lynqtech.atlassian.net/wiki/spaces/EL/pages/398270644/Conventions
+tags:
+  - name: metadata
+    description: Metadata about the service
+paths:
+  /version:
+    get:
+      tags:
+        - metadata
+      summary: Version and Build Information
+      description: Returns the version and build information of the service
+      operationId: version
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Version"
+  /healthy:
+    get:
+      tags:
+        - metadata
+      summary: Deep health check about downstream dependencies
+      description: Queries downstream dependencies and reveals a deep dive check about their healthiness.
+      externalDocs:
+        url: https://github.com/enercity/lib-health-checker
+        description: LYNQTECH Health Checker library
+      operationId: healthy
+      responses:
+        200:
+          description: OK - service and its dependencies are healthy
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Healthy"
+        503:
+          description: Service Unavailable - there's a problem somewhere downstream
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Healthy"
+      security:
+        - healthy_basic: []
+        - healthy_oauth:
+            - healthy
+components:
+  schemas:
+    Version:
+      type: object
+      properties:
+        version:
+          type: string
+          description: Semantic version of this service
+          example: v1.0.0-rc-TICKET-123
+        buildDate:
+          type: string
+          format: date-time
+          description: Timestamp when this build was started
+          example: 2021-12-02T12:40:11.831+0000
+        commitHash:
+          type: string
+          description: Git commit hash this service was build from
+          example: 810a48b1d68695088e80db55a9b00aa5227eddb2
+        commitDate:
+          type: string
+          format: date-time
+          description: Timestamp of `commitHash`
+          example: 2021-01-02T09:00:11.000+0000
+        buildBranch:
+          type: string
+          description: Branch where this build was triggered from
+          example: release/v1.0.0
+        description:
+          type: string
+          description: Optional and short description of this service
+          example: Customer Sample Service
+      required:
+        - version
+        - buildDate
+        - commitHash
+        - commitDate
+        - buildBranch
+    Healthy:
+      type: object
+      properties:
+        status:
+          type: string
+          description: overall status. 'ok' if everything is fine, 'failed' if any of the 'fatal' dependencies is broken. In this case, `/healthy` would return 503.
+          enum:
+            - ok
+            - failed
+          example: failed
+        timestamp:
+          type: string
+          format: date-time
+          description: Time when the check was done
+          example: 2021-12-02T12:42:30.398+0100
+        details:
+          type: array
+          items:
+            $ref: "#/components/schemas/HealthState"
+      required:
+        - status
+        - timestamp
+        - details
+    HealthState:
+      type: object
+      properties:
+        name:
+          type: string
+          description: name of the check, e.g. the name of a remote service, or "database"
+          example: database
+        status:
+          type: string
+          description: results of the latest run of a particular check.
+          enum:
+            - ok
+            - failed
+          example: failed
+        error:
+          type: string
+          description: the error returned from a failed health check
+          example: could not connect to database
+        fatal:
+          type: boolean
+          description: returns `true` if this dependency is vital for this service and a failure here would break the whole service
+          default: false
+          example: true
+      required:
+        - name
+        - status
+        - error
+  securitySchemes:
+    healthy_oauth:
+      type: oauth2
+      flows:
+        implicit:
+          authorizationUrl: example.com
+          scopes:
+            healthy: Deep health information
+    healthy_basic:
+      type: http
+      scheme: Basic

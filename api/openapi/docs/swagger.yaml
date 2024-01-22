@@ -1,0 +1,191 @@
+definitions:
+  dto.AppStatus:
+    properties:
+      buildBranch:
+        type: string
+      buildDate:
+        type: string
+      commitDate:
+        type: string
+      commitId:
+        type: string
+      description:
+        type: string
+      version:
+        type: string
+    type: object
+  dto.Customer:
+    properties:
+      email:
+        type: string
+      firstName:
+        type: string
+      id:
+        type: string
+      lastName:
+        type: string
+    type: object
+  dto.ListCustomersResponse:
+    properties:
+      items:
+        items:
+          $ref: '#/definitions/dto.Customer'
+        type: array
+      pagination:
+        $ref: '#/definitions/dto.Pagination'
+    type: object
+  dto.Pagination:
+    properties:
+      limit:
+        type: integer
+      offset:
+        type: integer
+      totalRows:
+        type: integer
+    required:
+    - limit
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: Service that deals with customers meter blocking.
+  license:
+    name: Closed
+  title: Blocking service
+paths:
+  /v1/customer:
+    post:
+      consumes:
+      - application/json
+      description: Creates a new customer.
+      parameters:
+      - description: Customer Firstname
+        in: body
+        name: firstName
+        required: true
+        schema:
+          type: string
+      - description: Customer Lastname
+        in: body
+        name: lastName
+        required: true
+        schema:
+          type: string
+      - description: Customer Email
+        in: body
+        name: email
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Validation passed and blocking order was sent
+          schema:
+            type: string
+        "400":
+          description: Bad request payload
+          schema:
+            type: string
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      summary: Creates a new customer
+      tags:
+      - Customer
+  /v1/customers:
+    get:
+      description: Customers returns a list of existing customers.
+      parameters:
+      - description: Limit
+        in: query
+        name: limit
+        required: true
+        type: integer
+      - description: Offset
+        in: query
+        name: offset
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.ListCustomersResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      summary: Customers returns a list of existing customers.
+      tags:
+      - Customer
+  /v1/find:
+    get:
+      description: Customers returns a list of existing customers.
+      parameters:
+      - description: Limit
+        in: query
+        name: limit
+        required: true
+        type: integer
+      - description: Offset
+        in: query
+        name: offset
+        type: integer
+      - description: First Name
+        in: query
+        name: fisrtName
+        type: string
+      - description: Last Name
+        in: query
+        name: lastName
+        type: string
+      - description: Customer Email
+        in: query
+        name: email
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.ListCustomersResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            type: string
+      summary: Customers returns a list of existing customers.
+      tags:
+      - Customer
+  /version:
+    get:
+      description: Application version information.
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/dto.AppStatus'
+      summary: Return the service version.
+      tags:
+      - Service Status
+schemes:
+- https
+swagger: "2.0"

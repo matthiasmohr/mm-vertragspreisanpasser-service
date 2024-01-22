@@ -1,0 +1,89 @@
+run:
+  timeout: 30m
+
+output:
+  # Better readability of the output
+  format: tab
+  sort-results: true
+
+linters:
+  # Disable all linters.
+  disable-all: true
+  # Enable specific linter
+  # https://golangci-lint.run/usage/linters/#enabled-by-default-linters
+  enable:
+    # checks whether HTTP response body is closed successfully
+    - bodyclose
+
+    # Tool for code clone detection
+    - dupl
+
+    # Errcheck is a program for checking for unchecked errors in go programs.
+    # These unchecked errors can be critical bugs in some cases
+    - errcheck
+
+    # Tool for detection of long functions
+    - funlen
+
+    # Checks that no init functions are present in Go code
+    - gochecknoinits
+
+    # Computes and checks the cyclomatic complexity of functions
+    - gocyclo
+
+    # Gofmt checks whether code was gofmt-ed.
+    # By default this tool runs with -s option to check for code simplification
+    - gofmt
+
+    # In addition to fixing imports, goimports also formats your code in the same style as gofmt.
+    - goimports
+
+    # Detects when assignments to existing variables are not used
+    - ineffassign
+
+    # Checks Go code for unused constants, variables, functions and types
+    - unused
+
+    # Inspects source code for security problems
+    - gosec
+
+linters-settings:
+  gocyclo:
+    # Minimal code complexity to report.
+    # Default: 30 (but we recommend 10-20)
+    min-complexity: 20
+
+  funlen:
+    # Checks the number of lines in a function.
+    # If lower than 0, disable the check.
+    # Default: 60
+    lines: 60
+    # Checks the number of statements in a function.
+    # If lower than 0, disable the check.
+    # Default: 40
+    statements: 40
+
+  gofmt:
+    # Simplify code: gofmt with `-s` option.
+    # Default: true
+    simplify: true
+
+  goimports:
+    # Put imports beginning with prefix after 3rd-party packages.
+    # It's a comma-separated list of prefixes.
+    # Default: ""
+    local-prefixes: ""
+
+issues:
+  # Report all issues
+  max-issues-per-linter: 0
+  max-same-issues: 0
+  # Disable some
+  exclude-rules:
+    - path: main.go|app.go
+      linters:
+        - funlen
+    - path: _test\.go|mock|integration
+      linters:
+        - funlen
+        - bodyclose

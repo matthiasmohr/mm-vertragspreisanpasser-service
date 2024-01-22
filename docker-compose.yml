@@ -1,0 +1,58 @@
+services:
+  sample-service:
+    container_name: customer-service
+    image: golang:1.21-alpine
+
+    working_dir: /app
+    command: go run ./
+    environment:
+      ENVIRONMENT_NAME: "dev"
+      CUSTOMER_LOGGER_FORMAT: "text"
+      CUSTOMER_LOGGER_LEVEL: "trace"
+      CUSTOMER_DATABASE_HOST: "postgres"
+      CUSTOMER_DATABASE_PORT: "5432"
+      CUSTOMER_DATABASE_NAME: "customer"
+      CUSTOMER_DATABASE_USER: "customer"
+      CUSTOMER_DATABASE_PASSWORD: "password"
+      CUSTOMER_DATABASE_LOG_MODE: "true"
+      CUSTOMER_SERVER_DEBUG: "true"
+      CUSTOMER_SERVER_ADDRESS: ":${PORT_CUSTOMER_SERVICE:-5000}"
+      CUSTOMER_SERVER_READ_TIMEOUT: "1m"
+      CUSTOMER_SERVER_WRITE_TIMEOUT: "1m"
+      CUSTOMER_SERVER_CORS_ALLOW_CREDENTIALS: "true"
+      CUSTOMER_SERVER_CORS_HEADERS: "*"
+      CUSTOMER_SERVER_CORS_METHODS: "*"
+      CUSTOMER_SERVER_CORS_ORIGINS: "*"
+      AWS_REGION: "eu-central-1"
+    volumes:
+      - ${PWD}/:/app
+      - .gitconfig:/root/.gitconfig
+      - ~/.ssh:/root/.ssh
+    depends_on:
+      - postgres
+      - migration
+    ports:
+      - "${PORT_CUSTOMER_SERVICE:-5000}:${PORT_CUSTOMER_SERVICE:-5000}"
+
+  migration:
+    container_name: customer-postgres-migration
+    build:
+      context: .
+      dockerfile: ./Dockerfile.init
+    volumes:
+      - ./migrations/dbconfig.yml:/dbconfig.yml
+    depends_on:
+      - postgres
+
+  postgres:
+    image: postgres:15.3
+    ports:
+      - "${PORT_POSTGRES:-5432}:5432"
+    volumes:
+      - customer-postgresql-data-volume:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: customer
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: customer
+volumes:
+  customer-postgresql-data-volume:

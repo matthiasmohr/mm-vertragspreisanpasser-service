@@ -1,0 +1,22 @@
+server:
+  address: localhost:8080
+  debug: true
+  read_timeout: 10s
+  write_timeout: 10s
+  cors:
+    allow_credentials: true
+    origins: <space separated list of allowed origins>
+    methods: POST GET PATCH PUT DELETE
+    headers: Content-Type Authorization Access-Control-Allow-Origin Access-Control-Allow-Credentials
+
+database:
+  host: <database host>
+  port: <database port>
+  name: <database name>
+  user: <database username>
+  password: <database password>
+  log_mode: true
+
+logger:
+  level: DEBUG
+  format: text

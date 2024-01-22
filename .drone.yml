@@ -1,0 +1,149 @@
+kind: pipeline
+name: default
+type: docker
+
+environment:
+  ECR_HOST: &default_ecr_host "367771023052.dkr.ecr.eu-central-1.amazonaws.com"
+  # TODO replace SERVICE_NAME with name of your service
+  ECR_REPO: &default_ecr_repo "enercity/SERVICE_NAME"
+  AWS_REGION: &default_aws_region eu-central-1
+
+workspace:
+  base: /go
+  path: be-service-sample
+
+steps:
+  - name: "build"
+    image: golang:1.21-alpine
+    pull: if-not-exists
+    environment:
+      GOPRIVATE: github.com/enercity
+    commands:
+      - apk add git libxml2-dev lmdb build-base make
+      - buildDate=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+      - commitHash=$(git rev-parse HEAD)
+      - commitDate=$(git log -1 --format=%cI)
+      - version=${DRONE_SEMVER}
+      - go build -ldflags "-linkmode=external -X main.version=$version -X main.buildDate=$buildDate -X main.buildBranch=$DRONE_BRANCH -X main.commitHash=$commitHash -X main.commitDate=$commitDate" -o ./dist/app ./
+          
+  - name: "unit test"
+    image: golang:1.21-alpine
+    pull: if-not-exists
+    environment:
+      GOPRIVATE: github.com/enercity
+    commands:
+      - apk add git libxml2-dev lmdb build-base
+      - go version
+      - go test ./...
+
+  - name: "static code analysis"
+    image: golangci/golangci-lint:v1.54.1
+    pull: if-not-exists
+    commands:
+      - make lint-drone
+
+  - name: "swag"
+    image: golang:1.21-alpine
+    pull: if-not-exists
+    commands:
+      - apk add git libxml2-dev lmdb build-base jq
+      - go get -u github.com/swaggo/swag/cmd/swag
+      - swag init -g pkg/server/echo.go -output api/openapi/docs
+
+
+  # todo include the following steps if you want your service released to the artifact storage
+
+#  - name: 'ecr: check if repos exists'
+#    image: lynqtech/docker-chart-releaser:0.0
+#    pull: if-not-exists
+#    commands:
+#      - /ecr.sh $${ECR_REPO}
+#      - /ecr.sh charts/$${ECR_REPO}
+#      - /ecr.sh iac/$${ECR_REPO}
+#
+#  # --- eco-system specific stuff starts here -------------------------
+#
+#  # --- eco-system specific stuff ends here ---------------------------
+#
+#  - name: 'ecr: publish container'
+#    image: plugins/ecr
+#    pull: if-not-exists
+#    settings:
+#      repo: *default_ecr_repo
+#      registry: *default_ecr_host
+#      region: *default_aws_region
+#      tags:
+#        - generic-${DRONE_COMMIT_SHA}
+#
+#
+#  # TODO replace SERVICE_NAME with name of your service
+#  - name: 'k8s: kustomize'
+#    image: lynqtech/docker-kustomize:2
+#    pull: if-not-exists
+#    commands:
+#      - if [ -z $DRONE_TAG ]; then export APP_ENV=dev; else export APP_ENV=$DRONE_TAG; fi; echo $APP_ENV
+#      - kustomize-lqt SERVICE_NAME k8s $APP_ENV ${DRONE_TAG}
+#
+#  - name: 'k8s: upload-manifest-to-s3'
+#    image: plugins/s3-sync:latest
+#    pull: if-not-exists
+#    settings:
+#      bucket:
+#        from_secret: BUCKET_BUILD_ARTIFACTS
+#      region: eu-central-1
+#      source: k8s
+#      target: /k8s
+#      acl: authenticated-read
+#
+#  - name: 'tf: upload-to-oci'
+#    image: lynqtech/docker-chart-releaser:0.0
+#    pull: if-not-exists
+#    commands:
+#      - STACK_VERSION=$(cat terraform/boring-registry.hcl | hclq get "metadata.version" -r)
+#      - echo "$STACK_VERSION"
+#      - /cr.sh --repo oci://$${ECR_HOST}/iac -d terraform --flux --name $${ECR_REPO} --external-version "$STACK_VERSION"
+
+trigger:
+  ref:
+    - refs/heads/main
+    - refs/tags/v*
+  event:
+    - push
+    - tag
+
+---
+kind: pipeline
+name: pullrequest
+type: docker
+
+steps:
+  - name: "build"
+    image: golang:1.21-alpine
+    pull: if-not-exists
+    environment:
+      GOPRIVATE: github.com/enercity
+    commands:
+      - apk add git libxml2-dev lmdb build-base make
+      - buildDate=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+      - commitHash=$(git rev-parse HEAD)
+      - commitDate=$(git log -1 --format=%cI)
+      - version=${DRONE_SEMVER}
+      - go build -ldflags "-X main.version=$version -X main.buildDate=$buildDate -X main.buildBranch=$DRONE_BRANCH -X main.commitHash=$commitHash -X main.commitDate=$commitDate" -o ./dist/app ./
+          
+  - name: "unit test"
+    image: golang:1.21-alpine
+    pull: if-not-exists
+    commands:
+      - apk add git libxml2-dev lmdb build-base make
+      - go version
+      - go test ./...
+
+  - name: "static code analysis"
+    image: golangci/golangci-lint:v1.54.1
+    pull: if-not-exists
+    commands:
+      - make lint-drone
+
+trigger:
+  event:
+    - pull_request

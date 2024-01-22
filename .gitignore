@@ -1,0 +1,25 @@
+config.yml
+config-integration.yml
+.env
+
+tmp/*
+dist/*
+!dist/.gitkeep
+
+# https://github.com/github/gitignore/blob/master/Go.gitignore
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.vscode
+
+# Test binary, built with `go test -c`
+*.test
+*_bin
+
+# Output of the go coverage tool, specifically when used with LiteIDE
+*.out
+
+.DS_Store
+.idea/
