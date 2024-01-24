@@ -2,6 +2,7 @@ package customer
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/enercity/be-service-sample/pkg/model/dto"
 	"github.com/enercity/be-service-sample/pkg/repository"
@@ -32,6 +33,7 @@ func (l *Loader) Load(
 	if err != nil {
 		logEntry.Warning("unable to retrieve total customers")
 
+		fmt.Println("MMMM ERROR:, ", err)
 		return nil, usecase.ErrDatabaseInternal
 	}
 

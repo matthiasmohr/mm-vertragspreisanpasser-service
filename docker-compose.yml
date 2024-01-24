@@ -16,7 +16,7 @@ services:
       CUSTOMER_DATABASE_PASSWORD: "password"
       CUSTOMER_DATABASE_LOG_MODE: "true"
       CUSTOMER_SERVER_DEBUG: "true"
-      CUSTOMER_SERVER_ADDRESS: ":${PORT_CUSTOMER_SERVICE:-5000}"
+      CUSTOMER_SERVER_ADDRESS: ":${PORT_CUSTOMER_SERVICE:-5001}"
       CUSTOMER_SERVER_READ_TIMEOUT: "1m"
       CUSTOMER_SERVER_WRITE_TIMEOUT: "1m"
       CUSTOMER_SERVER_CORS_ALLOW_CREDENTIALS: "true"
@@ -32,7 +32,7 @@ services:
       - postgres
       - migration
     ports:
-      - "${PORT_CUSTOMER_SERVICE:-5000}:${PORT_CUSTOMER_SERVICE:-5000}"
+      - "${PORT_CUSTOMER_SERVICE:-5001}:${PORT_CUSTOMER_SERVICE:-5001}"
 
   migration:
     container_name: customer-postgres-migration

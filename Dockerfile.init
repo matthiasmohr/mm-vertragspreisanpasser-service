@@ -2,6 +2,7 @@
 
 ## Start the definition of our build stage
 FROM golang:1-alpine
+RUN echo "test Dockerfile.init"
 
 RUN apk update && \
     apk add --no-cache \
@@ -13,12 +14,11 @@ RUN apk update && \
     postgresql-client \
     git
 
-RUN go get github.com/rubenv/sql-migrate/...
-
+RUN go install github.com/rubenv/sql-migrate/...
 
 COPY migrations /migrations
 WORKDIR /migrations
 
 ENV CUSTOMER_DATABASE_HOST=postgres
 
-CMD /go/bin/sql-migrate up -env="local" 
+CMD /go/bin/sql-migrate up -env="local"

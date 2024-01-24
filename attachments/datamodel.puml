@@ -1,0 +1,164 @@
+@startuml
+class PriceAdjustmentProject {
+  ID: UUID
+  Name: String
+  Comment: String
+  Creator: String
+  CreationTime: DateTime
+  Confirmer: String
+  ConfirmationTime: DateTime
+  UpdatedTime: DateTime
+  Executor: String
+  ExecutionTime: DateTime
+  --
+  NewPriceAdjustmentProject()
+  GetPriceAdjustmentProject()
+  SignoffPriceAdjustmentProject()
+  ExecutePriceAdjustmentProject()
+}
+
+class PriceChangeRuleCollection {
+    ID: UUID
+    PriceAdjustmentProject: REF
+    --
+    NewPriceChangeRuleCollection()
+}
+
+class PriceChangeRule {
+    ID: UUID
+    PriceChangeRuleCollection: REF
+    ..
+    //
+    RestoreMarginAtSignup: bool
+    ChangeBasePriceNetToAmount: float
+    ChangeKwhPriceNetToAmount: float
+    ChangeBasePriceNetByAmount: float
+    ChangeKwhPriceNetByAmount: float
+    ChangeBasePriceNetByFactor: float
+    ChangeKwhPriceNetByFactor: float
+    // Define Validity & Exclutions
+	ValidForProductNames: []string
+	ValidForCommodity: string
+	ExcludeOrderDateFrom: DateTime
+	ExcludeStartDateFrom: DateTime
+	ExcludeEndDateUntil: DateTime
+	ExcludeLastPriceChangeSince: DateTime
+	..
+	// Define Limits
+	LimitToCataloguePriceNet: bool
+	LimitToUpperBasePriceNet: float
+	LimitToUpperKwhPriceNet: float
+	LimitToLowerBasePriceNet: float
+	LimitToLowerKwhPriceNet: float
+	LimitToMaxChangeBasePriceNet: float
+	LimitToMaxChangeKwhPriceNet: float
+	LimitToMinChangeBasePriceNet: float
+    LimitToMinChangeKwhPriceNet: float
+    ..
+    OrderInPriceChangeRuleCollection
+    --
+    NewPriceChangeRule()
+    RemovePriceChangeRule()
+    MoveUpPriceChangeRule()
+    MoveDownPriceChangeRule()
+}
+
+class ContractInformation {
+    ID: UUID
+    Snapshot-Time DateTime
+    ..
+    Mba: String
+    ProductSerialNumber: String // index
+    ProductName: String // index
+    InArea: Bool
+    Commodity: string // index
+    ..
+    // Contract terms
+    AnnualConsumption: float
+    OrderDate: date
+    StartDate: date
+    EndDate: date
+    Status: string
+    PriceGuaranteeUntil: date
+    PriceChangePlanned: bool
+    ..
+    // Current pricing data
+    PriceValidSince: date
+    CurrentBaseCosts: float
+    CurrentKwhCosts: float
+    CurrentBaseMargin: float
+    CurrentKwhMargin: float
+    CurrentBasePriceNet: float
+    CurrentKwhPriceNet: float
+    --
+    NewContractInformation()
+    UpdateContractInformation()
+}
+
+class PriceChangeOrder {
+    ID: UUID
+    PriceChangeRule: REF
+    ContractInformation: REF
+    ..
+    Status
+    ..
+    // Current pricing data
+    PriceValidSince: date
+    CurrentBaseCosts: float
+    CurrentKwhCosts: float
+    CurrentBaseMargin: float
+    CurrentKwhMargin: float
+    CurrentBasePriceNet: float
+    CurrentKwhPriceNet: float
+    AnnualConsumption: float
+    ..
+    // Desired new pricing data
+    PriceValidAsOf: date
+    FutureBaseCosts: float
+    FutureKwhCosts: float
+    FutureKwhMargin: float
+    FutureBaseMargin: float
+    FutureBasePriceNet: float
+    FutureKwhPriceNet: float
+    AgentHintFlag: bool
+    AgentHintText: string
+    CommunicationFlag: bool
+    CommunictionTime: DateTime
+    --
+    NewPriceChangeOrder()
+    RemovePriceChangeOrder()
+    MarkExecutedPriceChangeOrder()
+    MarkErrorPriceChangeOrder()
+}
+
+class PriceChangeExecution {
+    ID: UUID
+    ProductSerialNumber: String
+    Preisanpassungsprojekt: REF
+    ..
+    Status
+    ExecutionTime
+    PricechangerResponse
+    ..
+    // Desired new pricing data
+    PriceValidAsOf: date
+    CurrentBasePriceNet: float
+    FutureBasePriceNet: float
+    CurrentKwhPriceNet: float
+    FutureKwhPriceNet: float
+    AgentHintFlag: bool
+    AgentHintText: string
+    CommunicationFlag: bool
+    CommunictionTime: DateTime
+    AnnualConsumption: float
+    --
+    StagePriceChangeExecution()
+    ProcessPriceChangeExecution()
+}
+
+PriceAdjustmentProject "1" -- "1" PriceChangeRuleCollection
+PriceChangeRuleCollection "1" -- "n" PriceChangeRule
+PriceChangeRuleCollection "1" -- "n" PriceChangeOrder
+ContractInformation "1" -- "n" PriceChangeOrder
+PriceChangeOrder "1" -- "n" PriceChangeExecution
+@enduml

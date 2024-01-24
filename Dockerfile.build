@@ -3,8 +3,9 @@
 ## Start the definition of our build stage
 FROM golang:1-alpine AS builder
 
+RUN echo "test Dockerfile.build"
 ## Install some needed tools
-RUN apk --no-cache add openssh git
+RUN apk add --no-cache git openssh
 RUN go get -u github.com/swaggo/swag/cmd/swag
 
 ## Do some prep work

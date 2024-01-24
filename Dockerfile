@@ -1,9 +1,11 @@
 FROM alpine:3
 
+RUN echo "test Dockerfile"
 RUN apk update && \
     apk add --no-cache libxml2 \
                        tzdata \
-                       libc6-compat
+                       libc6-compat \
+                       git
 
 WORKDIR /service
 
