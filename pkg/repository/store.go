@@ -7,4 +7,5 @@ type Store interface {
 	Rollback() error
 
 	Customer() Customer
+	ContractInformation() ContractInformation
 }

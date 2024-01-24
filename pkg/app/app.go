@@ -6,6 +6,7 @@ import (
 	"github.com/enercity/be-service-sample/pkg/server/handler"
 	"github.com/enercity/be-service-sample/pkg/server/middleware"
 	"github.com/enercity/be-service-sample/pkg/service/validation"
+	contractInformationUsecases "github.com/enercity/be-service-sample/pkg/usecase/contractInformation"
 	customerUsecases "github.com/enercity/be-service-sample/pkg/usecase/customer"
 	logger "github.com/enercity/lib-logger/v3"
 	"github.com/pkg/errors"
@@ -22,9 +23,13 @@ func Run(cfg *Config, lg logger.Logger) error {
 	}
 
 	// Init usecases
-	customerUsecase := customerUsecases.NewCreator(store)
+	customerCreateUsecase := customerUsecases.NewCreator(store)
 	customerLoaderUsecase := customerUsecases.NewLoader(store)
 	customerFinderUsecase := customerUsecases.NewFinder(store)
+
+	contractInformationCreateUseCase := contractInformationUsecases.NewCreator(store)
+	contractInformationListerUseCase := contractInformationUsecases.NewLister(store)
+	contractInformationFinderUseCase := contractInformationUsecases.NewFinder(store)
 
 	validator, err := validation.NewValidator()
 	if err != nil {
@@ -43,25 +48,31 @@ func Run(cfg *Config, lg logger.Logger) error {
 		cfg.Info.BuildBranch,
 	)
 
-	customerHandler := handler.NewCustomer(customerUsecase, customerLoaderUsecase, customerFinderUsecase, lg)
+	customerHandler := handler.NewCustomer(customerCreateUsecase, customerLoaderUsecase, customerFinderUsecase, lg)
+	contractInformationHandler := handler.NewContractInformation(contractInformationCreateUseCase, contractInformationListerUseCase, contractInformationFinderUseCase, lg)
 
-	customerServer := server.New(cfg.Server, lg)
+	mmServer := server.New(cfg.Server, lg)
 
-	customerServer.SetValidation(validator, &validation.Binder{})
-	customerServer.SetErrorHandler(server.ErrorHandler(lg))
+	mmServer.SetValidation(validator, &validation.Binder{})
+	mmServer.SetErrorHandler(server.ErrorHandler(lg))
 
 	// Set up routes.
-	routes := customerServer.SetupRoutes()
+	routes := mmServer.SetupRoutes()
 	routes.Use(middleware.BuildContext())
 
 	routes.GET("/version", statusHandler.Version)
 
 	v1 := routes.Group("v1")
-	customerGroup := v1.Group("/customer")
 
-	customerGroup.POST("", customerHandler.Create)
+	customerGroup := v1.Group("/customer")
 	customerGroup.GET("", customerHandler.Customers)
 	customerGroup.GET("/find", customerHandler.Find)
+	customerGroup.POST("", customerHandler.Create)
 
-	return errors.Wrap(customerServer.Run(), "error on customerServer.Run()")
+	contractInformationGroup := v1.Group("/contractinformation")
+	contractInformationGroup.GET("", contractInformationHandler.List)
+	contractInformationGroup.GET("/find", contractInformationHandler.Find)
+	contractInformationGroup.POST("", contractInformationHandler.Create)
+
+	return errors.Wrap(mmServer.Run(), "error on customerServer.Run()")
 }

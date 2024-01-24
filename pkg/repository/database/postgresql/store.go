@@ -14,9 +14,9 @@ import (
 )
 
 type Repository struct {
-	db *gorm.DB
-
-	customer repository.Customer
+	db                  *gorm.DB
+	customer            repository.Customer
+	contractInformation repository.ContractInformation
 }
 
 func New(cfg Config, lg logger.Logger) (repository.Store, error) {
@@ -35,9 +35,9 @@ func New(cfg Config, lg logger.Logger) (repository.Store, error) {
 	}
 
 	return &Repository{
-		db: db,
-
-		customer: newCustomer(db),
+		db:                  db,
+		customer:            newCustomer(db),
+		contractInformation: newContractInformation(db),
 	}, nil
 }
 
@@ -108,4 +108,7 @@ func (r *Repository) Rollback() error {
 // Case returns the case repository.
 func (r *Repository) Customer() repository.Customer {
 	return r.customer
+}
+func (r *Repository) ContractInformation() repository.ContractInformation {
+	return r.contractInformation
 }
