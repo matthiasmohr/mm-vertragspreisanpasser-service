@@ -2,7 +2,6 @@ package contractInformation
 
 import (
 	"context"
-
 	"github.com/enercity/be-service-sample/pkg/model/dto"
 	"github.com/enercity/be-service-sample/pkg/repository"
 	"github.com/enercity/be-service-sample/pkg/usecase"
@@ -29,6 +28,7 @@ func (f *Finder) Find(
 	res := &dto.FindContractInformationsResponse{}
 
 	total, err := f.store.ContractInformation().CountAllWithFilters(req.Map(), req.Pagination.Limit, req.Pagination.Offset)
+
 	if err != nil {
 		logEntry.WithError(err).Warning("unable to retrieve total contract informations")
 
@@ -41,6 +41,7 @@ func (f *Finder) Find(
 
 	contractInformations, err := f.store.ContractInformation().Find(req.Map(), req.Pagination.Limit, req.Pagination.Offset)
 	if err != nil {
+		logEntry.WithError(err).Warning("unable to retrieve database information")
 		return nil, usecase.ErrDatabaseInternal
 	}
 

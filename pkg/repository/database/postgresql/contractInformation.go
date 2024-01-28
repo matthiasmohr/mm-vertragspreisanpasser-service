@@ -3,6 +3,7 @@ package postgresql
 import (
 	"errors"
 	"fmt"
+	"regexp"
 	"strings"
 
 	"github.com/enercity/be-service-sample/pkg/model/domain"
@@ -52,10 +53,9 @@ func (ci *ContractInformation) Find(filters map[string]interface{}, limit, offse
 
 	stmt := ci.db.Model(&ContractInformation{}).
 		Limit(limit).
-		Offset(offset).
-		Order("contractinformation.created_at ASC")
+		Offset(offset)
 
-	applyFilters(stmt, filters)
+	applyFiltersToContractInformation(stmt, filters)
 
 	err := stmt.Find(&contractinformations).Error
 
@@ -64,16 +64,24 @@ func (ci *ContractInformation) Find(filters map[string]interface{}, limit, offse
 
 func applyFiltersToContractInformation(stmt *gorm.DB, filters map[string]interface{}) {
 	// TODO
-	applyLikeFilterContractInformation(stmt, filters, "first_name")
-	applyLikeFilterContractInformation(stmt, filters, "last_name")
-	applyLikeFilterContractInformation(stmt, filters, "email")
+	applyLikeFilterContractInformation(stmt, filters, "mba")
+	applyLikeFilterContractInformation(stmt, filters, "productSerialNumber")
 }
 
 func applyLikeFilterContractInformation(stmt *gorm.DB, filters map[string]interface{}, key string) {
 	if v, ok := filters[key]; ok {
 		val := "%" + strings.ToLower(v.(string)) + "%"
-		stmt = stmt.Where(fmt.Sprintf("LOWER(contractinformation.%s) LIKE ?", key), val)
+		stmt = stmt.Where(fmt.Sprintf("LOWER(%s) LIKE ?", toSnakeCase(key)), val)
 	}
+}
+
+var matchFirstCap = regexp.MustCompile("(.)([A-Z][a-z]+)")
+var matchAllCap = regexp.MustCompile("([a-z0-9])([A-Z])")
+
+func toSnakeCase(str string) string {
+	snake := matchFirstCap.ReplaceAllString(str, "${1}_${2}")
+	snake = matchAllCap.ReplaceAllString(snake, "${1}_${2}")
+	return strings.ToLower(snake)
 }
 
 func (ci *ContractInformation) Load(limit, offset int) ([]*domain.ContractInformation, error) {

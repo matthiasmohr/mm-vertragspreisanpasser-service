@@ -8,4 +8,5 @@ type Store interface {
 
 	Customer() Customer
 	ContractInformation() ContractInformation
+	PriceChangeOrder() PriceChangeOrder
 }

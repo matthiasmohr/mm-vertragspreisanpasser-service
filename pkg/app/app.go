@@ -8,6 +8,7 @@ import (
 	"github.com/enercity/be-service-sample/pkg/service/validation"
 	contractInformationUsecases "github.com/enercity/be-service-sample/pkg/usecase/contractInformation"
 	customerUsecases "github.com/enercity/be-service-sample/pkg/usecase/customer"
+	priceChangeOrderUsecases "github.com/enercity/be-service-sample/pkg/usecase/priceChangeOrder"
 	logger "github.com/enercity/lib-logger/v3"
 	"github.com/pkg/errors"
 )
@@ -31,6 +32,10 @@ func Run(cfg *Config, lg logger.Logger) error {
 	contractInformationListerUseCase := contractInformationUsecases.NewLister(store)
 	contractInformationFinderUseCase := contractInformationUsecases.NewFinder(store)
 
+	priceChangeOrderCreateUseCase := priceChangeOrderUsecases.NewCreator(store)
+	priceChangeOrderListerUseCase := priceChangeOrderUsecases.NewLister(store)
+	priceChangeOrderFinderUseCase := priceChangeOrderUsecases.NewFinder(store)
+
 	validator, err := validation.NewValidator()
 	if err != nil {
 		lg.WithError(err).Error("Couldn't create validator")
@@ -50,6 +55,7 @@ func Run(cfg *Config, lg logger.Logger) error {
 
 	customerHandler := handler.NewCustomer(customerCreateUsecase, customerLoaderUsecase, customerFinderUsecase, lg)
 	contractInformationHandler := handler.NewContractInformation(contractInformationCreateUseCase, contractInformationListerUseCase, contractInformationFinderUseCase, lg)
+	priceChangeOrderHandler := handler.NewPriceChangeOrder(priceChangeOrderCreateUseCase, priceChangeOrderListerUseCase, priceChangeOrderFinderUseCase, lg)
 
 	mmServer := server.New(cfg.Server, lg)
 
@@ -73,6 +79,11 @@ func Run(cfg *Config, lg logger.Logger) error {
 	contractInformationGroup.GET("", contractInformationHandler.List)
 	contractInformationGroup.GET("/find", contractInformationHandler.Find)
 	contractInformationGroup.POST("", contractInformationHandler.Create)
+
+	priceChangeOrderGroup := v1.Group("/pricechangeorder")
+	priceChangeOrderGroup.GET("", priceChangeOrderHandler.List)
+	priceChangeOrderGroup.GET("/find", priceChangeOrderHandler.Find)
+	priceChangeOrderGroup.POST("", priceChangeOrderHandler.Create)
 
 	return errors.Wrap(mmServer.Run(), "error on customerServer.Run()")
 }

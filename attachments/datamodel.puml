@@ -1,4 +1,9 @@
 @startuml
+
+class Contract {
+  ProductSerialNumber: string
+ }
+
 class PriceAdjustmentProject {
   ID: UUID
   Name: String
@@ -10,6 +15,7 @@ class PriceAdjustmentProject {
   UpdatedTime: DateTime
   Executor: String
   ExecutionTime: DateTime
+  Locked: Bool
   --
   NewPriceAdjustmentProject()
   GetPriceAdjustmentProject()
@@ -94,7 +100,7 @@ class ContractInformation {
     CountAll()
     CountAllWithFilters()
     Find()
-    Load()
+    List()
     Save()
 }
 
@@ -103,6 +109,7 @@ class PriceChangeOrder {
     PriceChangeRule: REF
     ContractInformation: REF
     ..
+    ProductSerialNumber: string
     Status
     ..
     // Current pricing data
@@ -162,6 +169,7 @@ class PriceChangeExecution {
 PriceAdjustmentProject "1" -- "1" PriceChangeRuleCollection
 PriceChangeRuleCollection "1" -- "n" PriceChangeRule
 PriceChangeRuleCollection "1" -- "n" PriceChangeOrder
-ContractInformation "1" -- "n" PriceChangeOrder
+Contract "1" -- "n" ContractInformation
+Contract "1" -- "n" PriceChangeOrder
 PriceChangeOrder "1" -- "n" PriceChangeExecution
 @enduml

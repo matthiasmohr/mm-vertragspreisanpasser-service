@@ -11,7 +11,7 @@ CREATE TABLE customers (
 );
 
 
-CREATE TABLE priceAdjustmentProject (
+CREATE TABLE price_adjustment_projects (
     id               UUID         NOT NULL,
     name             VARCHAR(255) NOT NULL,
     comment          VARCHAR(255),
@@ -22,15 +22,17 @@ CREATE TABLE priceAdjustmentProject (
     updatedTime      TIMESTAMPTZ,
     executor         VARCHAR(255),
     executionTime    TIMESTAMPTZ,
+    locked           BOOL,
     PRIMARY KEY (id)
 );
 
-CREATE TABLE priceChangeRuleCollection(
+CREATE TABLE price_change_rule_collections(
     id UUID NOT NULL,
-    priceAdjustmentProject UUID NOT NULL
+    priceAdjustmentProject UUID NOT NULL,
+    PRIMARY KEY (id)
 );
 
-CREATE TABLE priceChangeRule
+CREATE TABLE price_change_rules
 (
     id                         UUID NOT NULL,
     priceChangeRuleCollection  UUID,
@@ -59,67 +61,71 @@ CREATE TABLE priceChangeRule
     limitToMaxChangeKwhPriceNet     NUMERIC(6, 2),
     limitToMinChangeBasePriceNet    NUMERIC(6, 2),
     limitToMinChangeKwhPriceNet     NUMERIC(6, 2),
-    orderInPriceChangeRuleCollection INT
+    orderInPriceChangeRuleCollection INT,
+    PRIMARY KEY (id)
 );
 
 
-CREATE TABLE  contractInformation (
+CREATE TABLE  contract_informations (
     id                  UUID NOT NULL,
-    snapshotTime        TIMESTAMPTZ,
+    snapshot_time        TIMESTAMPTZ,
 
     mba                 VARCHAR(255),
-    productSerialNumber VARCHAR(255),
-    productName         VARCHAR(255),
-    inArea              BOOL,
+    product_serial_number VARCHAR(255),
+    product_name         VARCHAR(255),
+    in_area              BOOL,
     commodity           VARCHAR(255),
 
-    orderDate           TIMESTAMPTZ,
-    startDate           TIMESTAMPTZ,
-    endDate             TIMESTAMPTZ,
+    order_date           TIMESTAMPTZ,
+    start_date           TIMESTAMPTZ,
+    end_date             TIMESTAMPTZ,
     status              VARCHAR(255),
-    priceGuaranteeUntil TIMESTAMPTZ,
-    priceChangePlanned  BOOL,
+    price_guarantee_until TIMESTAMPTZ,
+    price_change_planned  BOOL,
 
-    priceValidSince     TIMESTAMPTZ,
-    currentBaseCosts    NUMERIC(6, 2),
-    currentKwhCosts     NUMERIC(6, 2),
-    currentBaseMargin   NUMERIC(6, 2),
-    currentKwhMargin    NUMERIC(6, 2),
-    currentBasePriceNet NUMERIC(6, 2),
-    currentKwhPriceNet  NUMERIC(6, 2),
-    annualConsumption   NUMERIC(12, 4)
+    price_valid_since     TIMESTAMPTZ,
+    current_base_costs    NUMERIC(6, 2),
+    current_kwh_costs     NUMERIC(6, 2),
+    current_base_margin   NUMERIC(6, 2),
+    current_kwh_margin    NUMERIC(6, 2),
+    current_base_price_net NUMERIC(6, 2),
+    current_kwh_price_net  NUMERIC(6, 2),
+    annual_consumption   NUMERIC(12, 4),
+    PRIMARY KEY (id)
 );
 
-CREATE TABLE priceChangeOrder (
+CREATE TABLE price_change_orders (
     id                      UUID,
-    priceChangeRule         UUID NOT NULL,
-    contractInformation     UUID NOT NULL,
+    created_at               TIMESTAMPTZ,
+    price_change_rule         VARCHAR(255),
 
+    product_serial_number     VARCHAR(255),
     status                  VARCHAR(255),
 
-    priceValidSince         TIMESTAMPTZ,
-    currentBaseCosts        NUMERIC(6, 2),
-    currentKwhCosts         NUMERIC(6, 2),
-    currentBaseMargin       NUMERIC(6, 2),
-    currentKwhMargin        NUMERIC(6, 2),
-    currentBasePriceNet     NUMERIC(6, 2),
-    currentKwhPriceNet      NUMERIC(6, 2),
-    annualConsumption       NUMERIC(12, 4),
+    price_valid_since         TIMESTAMPTZ,
+    current_base_costs        NUMERIC(6, 2),
+    current_kwh_costs         NUMERIC(6, 2),
+    current_base_margin       NUMERIC(6, 2),
+    current_kwh_margin        NUMERIC(6, 2),
+    current_base_price_net     NUMERIC(6, 2),
+    current_kwh_price_net      NUMERIC(6, 2),
+    annual_consumption       NUMERIC(12, 4),
 
-    priceValidAsOf          TIMESTAMPTZ,
-    futureBaseCosts         NUMERIC(6, 2),
-    futureKwhCosts          NUMERIC(6, 2),
-    futureKwhMargin         NUMERIC(6, 2),
-    futureBaseMargin        NUMERIC(6, 2),
-    futureBasePriceNet      NUMERIC(6, 2),
-    futureKwhPriceNet       NUMERIC(6, 2),
-    agentHintFlag           BOOL,
-    agentHintText           VARCHAR(255),
-    communicationFlag       BOOL,
-    communictionTime        TIMESTAMPTZ
+    price_valid_as_of          TIMESTAMPTZ,
+    future_base_costs         NUMERIC(6, 2),
+    future_kwh_costs          NUMERIC(6, 2),
+    future_kwh_margin         NUMERIC(6, 2),
+    future_base_margin        NUMERIC(6, 2),
+    future_base_price_net      NUMERIC(6, 2),
+    future_kwh_price_net       NUMERIC(6, 2),
+    agent_hint_flag           BOOL,
+    agent_hint_text           VARCHAR(255),
+    communication_flag       BOOL,
+    communiction_time        TIMESTAMPTZ,
+    PRIMARY KEY (id)
 );
 
-CREATE TABLE priceChangeExecution (
+CREATE TABLE price_change_executions (
     id                      UUID,
     productSerialNumber     VARCHAR(255),
     preisanpassungsprojekt  UUID NOT NULL,
@@ -137,14 +143,15 @@ CREATE TABLE priceChangeExecution (
     agentHintText           VARCHAR(255),
     communicationFlag       BOOL,
     communictionTime        TIMESTAMPTZ,
-    annualConsumption       NUMERIC(12, 4)
+    annualConsumption       NUMERIC(12, 4),
+    PRIMARY KEY (id)
 );
 
 -- +migrate Down
 DROP TABLE customers;
-DROP TABLE priceAdjustmentProject;
-DROP TABLE priceChangeRuleCollection;
-DROP TABLE priceChangeRule;
-DROP TABLE contractInformation;
-DROP TABLE priceChangeOrder;
-DROP TABLE priceChangeExecution;
+DROP TABLE price_adjustment_projects;
+DROP TABLE price_change_rule_collections;
+DROP TABLE price_change_rules;
+DROP TABLE contract_informations;
+DROP TABLE price_change_orders;
+DROP TABLE price_change_executions;

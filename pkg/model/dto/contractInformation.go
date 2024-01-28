@@ -70,7 +70,7 @@ type ListContractInformationsResponse struct {
 type FindContractInformationRequest struct {
 	Pagination          Pagination `json:"pagination"`
 	Mba                 *string    `json:"mba" validate:"required"`
-	ProductSerialNumber *string    `json:"email" validate:"required,email"`
+	ProductSerialNumber *string    `json:"productSerialNumber"`
 }
 
 type FindContractInformationsResponse struct {

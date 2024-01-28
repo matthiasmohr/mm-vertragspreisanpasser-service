@@ -34,7 +34,7 @@ func NewConfig(version, buildDate, commitHash, commitDate, buildBranch, descript
 	viper.SetConfigName("config")
 	viper.AddConfigPath(".")
 	viper.AddConfigPath("../")
-	viper.SetEnvPrefix("CUSTOMER")
+	viper.SetEnvPrefix("VERTRAGSPREISANPASSER")
 	viper.AutomaticEnv()
 	viper.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
 

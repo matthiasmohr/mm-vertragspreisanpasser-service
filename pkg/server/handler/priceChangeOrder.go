@@ -11,41 +11,41 @@ import (
 )
 
 type (
-	contractInformationCreater interface {
-		Create(ctx context.Context, logEntry logger.Entry, req *dto.CreateContractInformationRequest) error
+	priceChangeOrderCreater interface {
+		Create(ctx context.Context, logEntry logger.Entry, req *dto.CreatePriceChangeOrderRequest) error
 	}
 
-	contractInformationLister interface {
+	priceChangeOrderLister interface {
 		List(
-			ctx context.Context, logEntry logger.Entry, req *dto.ListContractInformationsRequest,
-		) (*dto.ListContractInformationsResponse, error)
+			ctx context.Context, logEntry logger.Entry, req *dto.ListPriceChangeOrderRequest,
+		) (*dto.ListPriceChangeOrderResponse, error)
 	}
 
-	contractInformationFinder interface {
+	priceChangeOrderFinder interface {
 		Find(
-			ctx context.Context, logEntry logger.Entry, req *dto.FindContractInformationRequest,
-		) (*dto.FindContractInformationsResponse, error)
+			ctx context.Context, logEntry logger.Entry, req *dto.FindPriceChangeOrderRequest,
+		) (*dto.FindPriceChangeOrderResponse, error)
 	}
 )
 
-type ContractInformation struct {
-	contractInformationCreater contractInformationCreater
-	contractInformationLister  contractInformationLister
-	contractInformationFinder  contractInformationFinder
-	logger                     logger.Logger
+type PriceChangeOrder struct {
+	priceChangeOrderCreater priceChangeOrderCreater
+	priceChangeOrderLister  priceChangeOrderLister
+	priceChangeOrderFinder  priceChangeOrderFinder
+	logger                  logger.Logger
 }
 
-func NewContractInformation(
-	contractInformationCreatorUsecase contractInformationCreater,
-	contractInformationListerUsecase contractInformationLister,
-	contractInformationFinderUsecase contractInformationFinder,
+func NewPriceChangeOrder(
+	priceChangeOrderCreatorUsecase priceChangeOrderCreater,
+	priceChangeOrderListerUsecase priceChangeOrderLister,
+	priceChangeOrderFinderUsecase priceChangeOrderFinder,
 	lg logger.Logger,
-) *ContractInformation {
-	return &ContractInformation{
-		contractInformationCreater: contractInformationCreatorUsecase,
-		contractInformationLister:  contractInformationListerUsecase,
-		contractInformationFinder:  contractInformationFinderUsecase,
-		logger:                     lg,
+) *PriceChangeOrder {
+	return &PriceChangeOrder{
+		priceChangeOrderCreater: priceChangeOrderCreatorUsecase,
+		priceChangeOrderLister:  priceChangeOrderListerUsecase,
+		priceChangeOrderFinder:  priceChangeOrderFinderUsecase,
+		logger:                  lg,
 	}
 }
 
@@ -63,7 +63,7 @@ func NewContractInformation(
 // @Failure 401 {string} string "Unauthorized"
 // @Failure 500 {string} string "Internal server error"
 // @Router /v1/contractinformation [post].
-func (ci *ContractInformation) Create(echoCtx echo.Context) error {
+func (ci *PriceChangeOrder) Create(echoCtx echo.Context) error {
 	ctx, err := loadContext(echoCtx)
 	if err != nil {
 		return server.NewHTTPError(err)
@@ -71,12 +71,12 @@ func (ci *ContractInformation) Create(echoCtx echo.Context) error {
 
 	logEntry := ci.logger.WithContext(ctx)
 
-	req := &dto.CreateContractInformationRequest{}
+	req := &dto.CreatePriceChangeOrderRequest{}
 	if err := bindAndValidate(req, echoCtx); err != nil {
 		return server.NewHTTPError(err)
 	}
 
-	if err := ci.contractInformationCreater.Create(ctx, logEntry, req); err != nil {
+	if err := ci.priceChangeOrderCreater.Create(ctx, logEntry, req); err != nil {
 		return server.NewHTTPError(err)
 	}
 
@@ -94,7 +94,7 @@ func (ci *ContractInformation) Create(echoCtx echo.Context) error {
 // @Failure 401 {string} string "Unauthorized"
 // @Failure 500 {string} string "Internal server error"
 // @Router /v1/contractinformation [get].
-func (ci *ContractInformation) List(echoCtx echo.Context) error {
+func (ci *PriceChangeOrder) List(echoCtx echo.Context) error {
 	ctx, err := loadContext(echoCtx)
 	if err != nil {
 		return server.NewHTTPError(err)
@@ -102,17 +102,17 @@ func (ci *ContractInformation) List(echoCtx echo.Context) error {
 
 	logEntry := ci.logger.WithContext(ctx)
 
-	req := &dto.ListContractInformationsRequest{}
+	req := &dto.ListPriceChangeOrderRequest{}
 	if err := bindAndValidate(req, echoCtx); err != nil {
 		return server.NewHTTPError(err)
 	}
 
-	contractinformations, err := ci.contractInformationLister.List(ctx, logEntry, req)
+	priceChangeOrders, err := ci.priceChangeOrderLister.List(ctx, logEntry, req)
 	if err != nil {
 		return server.NewHTTPError(err)
 	}
 
-	return echoCtx.JSON(http.StatusOK, contractinformations)
+	return echoCtx.JSON(http.StatusOK, priceChangeOrders)
 }
 
 // Customers returns a list of existing customers.
@@ -129,7 +129,7 @@ func (ci *ContractInformation) List(echoCtx echo.Context) error {
 // @Failure 401 {string} string "Unauthorized"
 // @Failure 500 {string} string "Internal server error"
 // @Router /v1/find [get].
-func (ci *ContractInformation) Find(echoCtx echo.Context) error {
+func (ci *PriceChangeOrder) Find(echoCtx echo.Context) error {
 	ctx, err := loadContext(echoCtx)
 	if err != nil {
 		return server.NewHTTPError(err)
@@ -137,18 +137,17 @@ func (ci *ContractInformation) Find(echoCtx echo.Context) error {
 
 	logEntry := ci.logger.WithContext(ctx)
 
-	mba := echoCtx.QueryParam("mba")
 	productSerialNumber := echoCtx.QueryParam("productSerialNumber")
 
-	req := &dto.FindContractInformationRequest{Mba: &mba, ProductSerialNumber: &productSerialNumber}
+	req := &dto.FindPriceChangeOrderRequest{ProductSerialNumber: &productSerialNumber}
 	if err := bindAndValidate(req, echoCtx); err != nil {
 		return server.NewHTTPError(err)
 	}
 
-	contractinformations, err := ci.contractInformationFinder.Find(ctx, logEntry, req)
+	priceChangeOrders, err := ci.priceChangeOrderFinder.Find(ctx, logEntry, req)
 	if err != nil {
 		return server.NewHTTPError(err)
 	}
 
-	return echoCtx.JSON(http.StatusOK, contractinformations)
+	return echoCtx.JSON(http.StatusOK, priceChangeOrders)
 }
