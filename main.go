@@ -1,12 +1,11 @@
 package main
 
 import (
+	logger "github.com/enercity/lib-logger/v3"
+	"github.com/matthiasmohr/mm-vertragspreisanpasser-service/pkg/app"
+	"github.com/matthiasmohr/mm-vertragspreisanpasser-service/pkg/contextbuilder"
 	"log"
 	"os"
-
-	"github.com/enercity/be-service-sample/pkg/app"
-	"github.com/enercity/be-service-sample/pkg/contextbuilder"
-	logger "github.com/enercity/lib-logger/v3"
 )
 
 // Application metadata that is set at compile time. See drone.yml from project template for details.

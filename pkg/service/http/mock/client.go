@@ -3,7 +3,7 @@ package mock
 import (
 	"context"
 
-	"github.com/enercity/be-service-sample/pkg/service/http"
+	"github.com/matthiasmohr/mm-vertragspreisanpasser-service/pkg/service/http"
 	"github.com/stretchr/testify/mock"
 )
 

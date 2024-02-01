@@ -133,22 +133,25 @@ class PriceChangeOrder {
     AgentHintFlag: bool
     AgentHintText: string
     CommunicationFlag: bool
-    CommunictionTime: DateTime
+    CommunicationTime: DateTime
     --
-    NewPriceChangeOrder()
-    RemovePriceChangeOrder()
-    MarkExecutedPriceChangeOrder()
-    MarkErrorPriceChangeOrder()
+    CountAll()
+    CountAllWithFilters()
+    Find()
+    List()
+    Save()
+    Execute()
 }
 
 class PriceChangeExecution {
     ID: UUID
-    ProductSerialNumber: String
-    Preisanpassungsprojekt: REF
+    CreatedAt: DateTime
+    ProductSerialNumber: string
+    PriceChangeOrder: string
     ..
-    Status
-    ExecutionTime
-    PricechangerResponse
+    Status: string
+    ExecutionTime: DateTime
+    PricechangerResponse: string
     ..
     // Desired new pricing data
     PriceValidAsOf: date
@@ -159,11 +162,12 @@ class PriceChangeExecution {
     AgentHintFlag: bool
     AgentHintText: string
     CommunicationFlag: bool
-    CommunictionTime: DateTime
+    CommunicationTime: DateTime
     AnnualConsumption: float
     --
-    StagePriceChangeExecution()
-    ProcessPriceChangeExecution()
+    ConfirmExecuted()
+    ConfirmCancelled()
+    ConfirmError()
 }
 
 PriceAdjustmentProject "1" -- "1" PriceChangeRuleCollection

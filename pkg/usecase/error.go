@@ -20,6 +20,7 @@ func (e *Error) Error() string {
 // Domain error codes.
 const (
 	ErrCodeDomainInternal = iota + 5001000
+	ErrCodeNotAllowed
 )
 
 // Domain errors.
@@ -29,12 +30,17 @@ var (
 		Code:    ErrCodeDomainInternal,
 		Type:    ErrTypeDomain,
 	}
+	ErrNotAllowed = &Error{
+		Message: "not allowed",
+		Code:    ErrCodeNotAllowed,
+		Type:    ErrTypeDomain,
+	}
 )
 
 // Database error codes.
 const (
 	ErrCodeDatabaseInternal = iota + 5002000
-	ErrCodeDatabaseCustomerNotFound
+	ErrCodeDatabaseNotFound
 )
 
 // Database errors.
@@ -45,9 +51,9 @@ var (
 		Type:    ErrTypeDatabase,
 	}
 
-	ErrDatabaseCustomerNotFound = &Error{
+	ErrDatabaseNotFound = &Error{
 		Message: "case not found",
-		Code:    ErrCodeDatabaseCustomerNotFound,
+		Code:    ErrCodeDatabaseNotFound,
 		Type:    ErrTypeDatabase,
 	}
 )

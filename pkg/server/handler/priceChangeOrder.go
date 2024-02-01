@@ -4,10 +4,10 @@ import (
 	"context"
 	"net/http"
 
-	"github.com/enercity/be-service-sample/pkg/model/dto"
-	"github.com/enercity/be-service-sample/pkg/server"
 	logger "github.com/enercity/lib-logger/v3"
 	"github.com/labstack/echo/v4"
+	"github.com/matthiasmohr/mm-vertragspreisanpasser-service/pkg/model/dto"
+	"github.com/matthiasmohr/mm-vertragspreisanpasser-service/pkg/server"
 )
 
 type (
@@ -26,26 +26,34 @@ type (
 			ctx context.Context, logEntry logger.Entry, req *dto.FindPriceChangeOrderRequest,
 		) (*dto.FindPriceChangeOrderResponse, error)
 	}
+
+	priceChangeOrderExecuter interface {
+		Execute(
+			ctx context.Context, logEntry logger.Entry, req *dto.ExecutePriceChangeOrderRequest) error
+	}
 )
 
 type PriceChangeOrder struct {
-	priceChangeOrderCreater priceChangeOrderCreater
-	priceChangeOrderLister  priceChangeOrderLister
-	priceChangeOrderFinder  priceChangeOrderFinder
-	logger                  logger.Logger
+	priceChangeOrderCreater  priceChangeOrderCreater
+	priceChangeOrderLister   priceChangeOrderLister
+	priceChangeOrderFinder   priceChangeOrderFinder
+	priceChangeOrderExecuter priceChangeOrderExecuter
+	logger                   logger.Logger
 }
 
 func NewPriceChangeOrder(
 	priceChangeOrderCreatorUsecase priceChangeOrderCreater,
 	priceChangeOrderListerUsecase priceChangeOrderLister,
 	priceChangeOrderFinderUsecase priceChangeOrderFinder,
+	priceChangeOrderExecuterUsecase priceChangeOrderExecuter,
 	lg logger.Logger,
 ) *PriceChangeOrder {
 	return &PriceChangeOrder{
-		priceChangeOrderCreater: priceChangeOrderCreatorUsecase,
-		priceChangeOrderLister:  priceChangeOrderListerUsecase,
-		priceChangeOrderFinder:  priceChangeOrderFinderUsecase,
-		logger:                  lg,
+		priceChangeOrderCreater:  priceChangeOrderCreatorUsecase,
+		priceChangeOrderLister:   priceChangeOrderListerUsecase,
+		priceChangeOrderFinder:   priceChangeOrderFinderUsecase,
+		priceChangeOrderExecuter: priceChangeOrderExecuterUsecase,
+		logger:                   lg,
 	}
 }
 
@@ -83,14 +91,14 @@ func (ci *PriceChangeOrder) Create(echoCtx echo.Context) error {
 	return echoCtx.NoContent(http.StatusOK)
 }
 
-// Contract Informations returns a list of existing customers.
-// @Summary Customers returns a list of existing customers.
-// @Description Customers returns a list of existing customers.
-// @Tags Customer
+// Contract Informations returns a list of existing Orders.
+// @Summary Orders returns a list of existing Orders.
+// @Description Orders returns a list of existing Orders.
+// @Tags Order
 // @Produce json
 // @Param limit query int true "Limit"
 // @Param offset query int false "Offset"
-// @Success 200 {object} dto.ListCustomersResponse
+// @Success 200 {object} dto.ListOrdersResponse
 // @Failure 401 {string} string "Unauthorized"
 // @Failure 500 {string} string "Internal server error"
 // @Router /v1/contractinformation [get].
@@ -115,17 +123,17 @@ func (ci *PriceChangeOrder) List(echoCtx echo.Context) error {
 	return echoCtx.JSON(http.StatusOK, priceChangeOrders)
 }
 
-// Customers returns a list of existing customers.
-// @Summary Customers returns a list of existing customers.
-// @Description Customers returns a list of existing customers.
-// @Tags Customer
+// Orders returns a list of existing Orders.
+// @Summary Orders returns a list of existing Orders.
+// @Description Orders returns a list of existing Orders.
+// @Tags Order
 // @Produce json
 // @Param limit query int true "Limit"
 // @Param offset query int false "Offset"
 // @Param fisrtName query string false "First Name"
 // @Param lastName query string false "Last Name"
-// @Param email query string false "Customer Email"
-// @Success 200 {object} dto.ListCustomersResponse
+// @Param email query string false "Order Email"
+// @Success 200 {object} dto.ListOrdersResponse
 // @Failure 401 {string} string "Unauthorized"
 // @Failure 500 {string} string "Internal server error"
 // @Router /v1/find [get].
@@ -150,4 +158,27 @@ func (ci *PriceChangeOrder) Find(echoCtx echo.Context) error {
 	}
 
 	return echoCtx.JSON(http.StatusOK, priceChangeOrders)
+}
+
+func (ci *PriceChangeOrder) Execute(echoCtx echo.Context) error {
+	ctx, err := loadContext(echoCtx)
+	if err != nil {
+		return server.NewHTTPError(err)
+	}
+
+	logEntry := ci.logger.WithContext(ctx)
+
+	id := echoCtx.QueryParam("id")
+
+	req := &dto.ExecutePriceChangeOrderRequest{id}
+	if err := bindAndValidate(req, echoCtx); err != nil {
+		return server.NewHTTPError(err)
+	}
+
+	err = ci.priceChangeOrderExecuter.Execute(ctx, logEntry, req)
+	if err != nil {
+		return server.NewHTTPError(err)
+	}
+
+	return echoCtx.NoContent(http.StatusOK)
 }

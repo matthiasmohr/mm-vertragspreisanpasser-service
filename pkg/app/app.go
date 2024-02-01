@@ -1,15 +1,16 @@
 package app
 
 import (
-	"github.com/enercity/be-service-sample/pkg/repository/database/postgresql"
-	"github.com/enercity/be-service-sample/pkg/server"
-	"github.com/enercity/be-service-sample/pkg/server/handler"
-	"github.com/enercity/be-service-sample/pkg/server/middleware"
-	"github.com/enercity/be-service-sample/pkg/service/validation"
-	contractInformationUsecases "github.com/enercity/be-service-sample/pkg/usecase/contractInformation"
-	customerUsecases "github.com/enercity/be-service-sample/pkg/usecase/customer"
-	priceChangeOrderUsecases "github.com/enercity/be-service-sample/pkg/usecase/priceChangeOrder"
 	logger "github.com/enercity/lib-logger/v3"
+	"github.com/matthiasmohr/mm-vertragspreisanpasser-service/pkg/repository/database/postgresql"
+	"github.com/matthiasmohr/mm-vertragspreisanpasser-service/pkg/server"
+	"github.com/matthiasmohr/mm-vertragspreisanpasser-service/pkg/server/handler"
+	"github.com/matthiasmohr/mm-vertragspreisanpasser-service/pkg/server/middleware"
+	"github.com/matthiasmohr/mm-vertragspreisanpasser-service/pkg/service/validation"
+	contractInformationUsecases "github.com/matthiasmohr/mm-vertragspreisanpasser-service/pkg/usecase/contractInformation"
+	customerUsecases "github.com/matthiasmohr/mm-vertragspreisanpasser-service/pkg/usecase/customer"
+	priceChangeExecutionUsecases "github.com/matthiasmohr/mm-vertragspreisanpasser-service/pkg/usecase/priceChangeExecution"
+	priceChangeOrderUsecases "github.com/matthiasmohr/mm-vertragspreisanpasser-service/pkg/usecase/priceChangeOrder"
 	"github.com/pkg/errors"
 )
 
@@ -35,6 +36,11 @@ func Run(cfg *Config, lg logger.Logger) error {
 	priceChangeOrderCreateUseCase := priceChangeOrderUsecases.NewCreator(store)
 	priceChangeOrderListerUseCase := priceChangeOrderUsecases.NewLister(store)
 	priceChangeOrderFinderUseCase := priceChangeOrderUsecases.NewFinder(store)
+	priceChangeOrderExecuteUseCase := priceChangeOrderUsecases.NewExecuter(store)
+
+	priceChangeExecutionListerUseCase := priceChangeExecutionUsecases.NewLister(store)
+	priceChangeExecutionFinderUseCase := priceChangeExecutionUsecases.NewFinder(store)
+	priceChangeExecutionExecuteUseCase := priceChangeExecutionUsecases.NewExecuter(store)
 
 	validator, err := validation.NewValidator()
 	if err != nil {
@@ -55,7 +61,8 @@ func Run(cfg *Config, lg logger.Logger) error {
 
 	customerHandler := handler.NewCustomer(customerCreateUsecase, customerLoaderUsecase, customerFinderUsecase, lg)
 	contractInformationHandler := handler.NewContractInformation(contractInformationCreateUseCase, contractInformationListerUseCase, contractInformationFinderUseCase, lg)
-	priceChangeOrderHandler := handler.NewPriceChangeOrder(priceChangeOrderCreateUseCase, priceChangeOrderListerUseCase, priceChangeOrderFinderUseCase, lg)
+	priceChangeOrderHandler := handler.NewPriceChangeOrder(priceChangeOrderCreateUseCase, priceChangeOrderListerUseCase, priceChangeOrderFinderUseCase, priceChangeOrderExecuteUseCase, lg)
+	priceChangeExecutionHandler := handler.NewPriceChangeExecution(priceChangeExecutionListerUseCase, priceChangeExecutionFinderUseCase, priceChangeExecutionExecuteUseCase, lg)
 
 	mmServer := server.New(cfg.Server, lg)
 
@@ -84,6 +91,12 @@ func Run(cfg *Config, lg logger.Logger) error {
 	priceChangeOrderGroup.GET("", priceChangeOrderHandler.List)
 	priceChangeOrderGroup.GET("/find", priceChangeOrderHandler.Find)
 	priceChangeOrderGroup.POST("", priceChangeOrderHandler.Create)
+	priceChangeOrderGroup.POST("/execute", priceChangeOrderHandler.Execute)
+
+	priceChangeExecutionGroup := v1.Group("/pricechangeexecution")
+	priceChangeExecutionGroup.GET("", priceChangeExecutionHandler.List)
+	priceChangeExecutionGroup.GET("/find", priceChangeExecutionHandler.Find)
+	priceChangeExecutionGroup.POST("/execute", priceChangeExecutionHandler.Execute)
 
 	return errors.Wrap(mmServer.Run(), "error on customerServer.Run()")
 }

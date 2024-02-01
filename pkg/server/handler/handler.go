@@ -5,9 +5,9 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/enercity/be-service-sample/pkg/server"
-	"github.com/enercity/be-service-sample/pkg/server/middleware"
 	"github.com/labstack/echo/v4"
+	"github.com/matthiasmohr/mm-vertragspreisanpasser-service/pkg/server"
+	"github.com/matthiasmohr/mm-vertragspreisanpasser-service/pkg/server/middleware"
 )
 
 func bindAndValidate(request interface{}, ctx echo.Context) error {

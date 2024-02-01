@@ -99,3 +99,8 @@ If you don't want files to be checked or written to by Prettier, put them into `
 - [Error Handling](https://lynqtech.atlassian.net/wiki/x/bgCHI)
 - [Eventing](https://lynqtech.atlassian.net/wiki/x/vAj3G)
 - [Static Code Analysis](https://lynqtech.atlassian.net/wiki/x/GQDYIQ)
+
+ToDo:
+A list of ToDos
+- Validate the range of all DTO inputs
+- Make "NotAllowed" to an expected (non 500) error

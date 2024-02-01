@@ -4,10 +4,10 @@ import (
 	"context"
 	"net/http"
 
-	"github.com/enercity/be-service-sample/pkg/model/dto"
-	"github.com/enercity/be-service-sample/pkg/server"
 	logger "github.com/enercity/lib-logger/v3"
 	"github.com/labstack/echo/v4"
+	"github.com/matthiasmohr/mm-vertragspreisanpasser-service/pkg/model/dto"
+	"github.com/matthiasmohr/mm-vertragspreisanpasser-service/pkg/server"
 )
 
 type (

@@ -4,10 +4,10 @@ import (
 	"context"
 	"net/http"
 
-	"github.com/enercity/be-service-sample/pkg/model/dto"
-	"github.com/enercity/be-service-sample/pkg/server"
 	logger "github.com/enercity/lib-logger/v3"
 	"github.com/labstack/echo/v4"
+	"github.com/matthiasmohr/mm-vertragspreisanpasser-service/pkg/model/dto"
+	"github.com/matthiasmohr/mm-vertragspreisanpasser-service/pkg/server"
 )
 
 type (
@@ -83,14 +83,14 @@ func (ci *ContractInformation) Create(echoCtx echo.Context) error {
 	return echoCtx.NoContent(http.StatusOK)
 }
 
-// Contract Informations returns a list of existing customers.
-// @Summary Customers returns a list of existing customers.
-// @Description Customers returns a list of existing customers.
-// @Tags Customer
+// Contract Informations returns a list of existing ContractInformations.
+// @Summary ContractInformations returns a list of existing ContractInformations.
+// @Description ContractInformations returns a list of existing ContractInformations.
+// @Tags ContractInformation
 // @Produce json
 // @Param limit query int true "Limit"
 // @Param offset query int false "Offset"
-// @Success 200 {object} dto.ListCustomersResponse
+// @Success 200 {object} dto.ListContractInformationsResponse
 // @Failure 401 {string} string "Unauthorized"
 // @Failure 500 {string} string "Internal server error"
 // @Router /v1/contractinformation [get].
@@ -115,17 +115,17 @@ func (ci *ContractInformation) List(echoCtx echo.Context) error {
 	return echoCtx.JSON(http.StatusOK, contractinformations)
 }
 
-// Customers returns a list of existing customers.
-// @Summary Customers returns a list of existing customers.
-// @Description Customers returns a list of existing customers.
-// @Tags Customer
+// ContractInformations returns a list of existing ContractInformations.
+// @Summary ContractInformations returns a list of existing ContractInformations.
+// @Description ContractInformations returns a list of existing ContractInformations.
+// @Tags ContractInformation
 // @Produce json
 // @Param limit query int true "Limit"
 // @Param offset query int false "Offset"
 // @Param fisrtName query string false "First Name"
 // @Param lastName query string false "Last Name"
-// @Param email query string false "Customer Email"
-// @Success 200 {object} dto.ListCustomersResponse
+// @Param email query string false "ContractInformation Email"
+// @Success 200 {object} dto.ListContractInformationsResponse
 // @Failure 401 {string} string "Unauthorized"
 // @Failure 500 {string} string "Internal server error"
 // @Router /v1/find [get].

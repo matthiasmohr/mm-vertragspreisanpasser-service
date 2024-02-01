@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/enercity/be-service-sample/pkg/repository/database/postgresql"
-	"github.com/enercity/be-service-sample/pkg/server"
 	logger "github.com/enercity/lib-logger/v3"
+	"github.com/matthiasmohr/mm-vertragspreisanpasser-service/pkg/repository/database/postgresql"
+	"github.com/matthiasmohr/mm-vertragspreisanpasser-service/pkg/server"
 	"github.com/spf13/viper"
 )
 

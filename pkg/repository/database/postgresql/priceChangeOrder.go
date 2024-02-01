@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/enercity/be-service-sample/pkg/model/domain"
+	"github.com/matthiasmohr/mm-vertragspreisanpasser-service/pkg/model/domain"
 	"gorm.io/gorm"
 )
 
@@ -19,10 +19,10 @@ func newPriceChangeOrder(db *gorm.DB) *PriceChangeOrder {
 	}
 }
 
-func (c *PriceChangeOrder) CountAll() (int64, error) {
+func (ci *PriceChangeOrder) CountAll() (int64, error) {
 	var count int64
 
-	err := c.db.Model(&PriceChangeOrder{}).Count(&count).Error
+	err := ci.db.Model(&PriceChangeOrder{}).Count(&count).Error
 	if err != nil {
 		return count, err
 	}
@@ -37,7 +37,7 @@ func (ci *PriceChangeOrder) CountAllWithFilters(filters map[string]interface{}, 
 		Limit(limit).
 		Offset(offset)
 
-	applyFilters(stmt, filters)
+	applyFiltersToPriceChangeOrder(stmt, filters)
 
 	err := stmt.Count(&count).Error
 	if err != nil {
@@ -63,6 +63,7 @@ func (ci *PriceChangeOrder) Find(filters map[string]interface{}, limit, offset i
 
 func applyFiltersToPriceChangeOrder(stmt *gorm.DB, filters map[string]interface{}) {
 	// TODO
+	applyLikeFilterPriceChangeOrder(stmt, filters, "id")
 	applyLikeFilterPriceChangeOrder(stmt, filters, "productSerialNumber")
 }
 
@@ -88,6 +89,18 @@ func (ci *PriceChangeOrder) Load(limit, offset int) ([]*domain.PriceChangeOrder,
 	return priceChangeOrders, err
 }
 
+func (ci *PriceChangeOrder) FindByIDs(ids ...domain.UUID) ([]*domain.PriceChangeOrder, error) {
+	var priceChangeOrders []*domain.PriceChangeOrder
+
+	err := ci.db.Table("price_change_orders").Where("id IN ?", ids).Find(&priceChangeOrders).Error
+
+	return priceChangeOrders, err
+}
+
 func (ci *PriceChangeOrder) Save(pricechangeorder *domain.PriceChangeOrder) error {
 	return ci.db.Create(pricechangeorder).Error
+}
+
+func (ci *PriceChangeOrder) Update(pricechangeorder *domain.PriceChangeOrder) error {
+	return ci.db.Updates(pricechangeorder).Error
 }

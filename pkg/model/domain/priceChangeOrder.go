@@ -31,7 +31,7 @@ type PriceChangeOrder struct {
 	AgentHintFlag      bool
 	AgentHintText      string
 	CommunicationFlag  bool
-	CommunictionTime   time.Time
+	CommunicationTime  time.Time
 }
 
 func NewPriceChangeOrder(
@@ -57,7 +57,7 @@ func NewPriceChangeOrder(
 	agentHintFlag bool,
 	agentHintText string,
 	communicationFlag bool,
-	communictionTime time.Time,
+	communicationTime time.Time,
 ) (*PriceChangeOrder, error) {
 	id, err := NewUUID()
 	if err != nil {
@@ -94,6 +94,6 @@ func NewPriceChangeOrder(
 		AgentHintFlag:      agentHintFlag,
 		AgentHintText:      agentHintText,
 		CommunicationFlag:  communicationFlag,
-		CommunictionTime:   communictionTime,
+		CommunicationTime:  communicationTime,
 	}, nil
 }

@@ -6,18 +6,19 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/enercity/be-service-sample/pkg/repository"
 	logger "github.com/enercity/lib-logger/v3"
+	"github.com/matthiasmohr/mm-vertragspreisanpasser-service/pkg/repository"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	glogger "gorm.io/gorm/logger"
 )
 
 type Repository struct {
-	db                  *gorm.DB
-	customer            repository.Customer
-	contractInformation repository.ContractInformation
-	priceChangeOrder    repository.PriceChangeOrder
+	db                   *gorm.DB
+	customer             repository.Customer
+	contractInformation  repository.ContractInformation
+	priceChangeOrder     repository.PriceChangeOrder
+	priceChangeExecution repository.PriceChangeExecution
 }
 
 func New(cfg Config, lg logger.Logger) (repository.Store, error) {
@@ -36,10 +37,11 @@ func New(cfg Config, lg logger.Logger) (repository.Store, error) {
 	}
 
 	return &Repository{
-		db:                  db,
-		customer:            newCustomer(db),
-		contractInformation: newContractInformation(db),
-		priceChangeOrder:    newPriceChangeOrder(db),
+		db:                   db,
+		customer:             newCustomer(db),
+		contractInformation:  newContractInformation(db),
+		priceChangeOrder:     newPriceChangeOrder(db),
+		priceChangeExecution: newPriceChangeExecution(db),
 	}, nil
 }
 
@@ -114,6 +116,11 @@ func (r *Repository) Customer() repository.Customer {
 func (r *Repository) ContractInformation() repository.ContractInformation {
 	return r.contractInformation
 }
+
 func (r *Repository) PriceChangeOrder() repository.PriceChangeOrder {
 	return r.priceChangeOrder
+}
+
+func (r *Repository) PriceChangeExecution() repository.PriceChangeExecution {
+	return r.priceChangeExecution
 }

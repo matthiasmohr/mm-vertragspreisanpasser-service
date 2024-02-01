@@ -4,10 +4,10 @@ import (
 	"errors"
 	"net/http"
 
-	"github.com/enercity/be-service-sample/pkg/service/validation"
-	"github.com/enercity/be-service-sample/pkg/usecase"
 	logger "github.com/enercity/lib-logger/v3"
 	"github.com/labstack/echo/v4"
+	"github.com/matthiasmohr/mm-vertragspreisanpasser-service/pkg/service/validation"
+	"github.com/matthiasmohr/mm-vertragspreisanpasser-service/pkg/usecase"
 )
 
 // HTTPError represents a handler error.
@@ -41,7 +41,7 @@ func NewHTTPError(err error) error {
 	var uErr *usecase.Error
 	if errors.As(err, &uErr) {
 		switch {
-		case errors.Is(uErr, usecase.ErrDatabaseCustomerNotFound):
+		case errors.Is(uErr, usecase.ErrDatabaseNotFound):
 			httpErr.Message = uErr.Message
 			httpErr.HTTPCode = http.StatusNotFound
 		default:

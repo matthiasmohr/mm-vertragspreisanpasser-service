@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/enercity/be-service-sample/pkg/model/domain"
+	"github.com/matthiasmohr/mm-vertragspreisanpasser-service/pkg/model/domain"
 	"gorm.io/gorm"
 )
 

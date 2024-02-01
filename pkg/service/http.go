@@ -3,7 +3,7 @@ package service
 import (
 	"context"
 
-	"github.com/enercity/be-service-sample/pkg/service/http"
+	"github.com/matthiasmohr/mm-vertragspreisanpasser-service/pkg/service/http"
 )
 
 // HTTPClient is a custom HTTP client used for communication with external services.

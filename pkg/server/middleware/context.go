@@ -1,8 +1,8 @@
 package middleware
 
 import (
-	"github.com/enercity/be-service-sample/pkg/contextbuilder"
 	"github.com/labstack/echo/v4"
+	"github.com/matthiasmohr/mm-vertragspreisanpasser-service/pkg/contextbuilder"
 )
 
 const (

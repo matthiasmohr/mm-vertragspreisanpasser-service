@@ -2,10 +2,10 @@ package customer
 
 import (
 	"context"
-	"github.com/enercity/be-service-sample/pkg/model/dto"
-	"github.com/enercity/be-service-sample/pkg/repository"
-	"github.com/enercity/be-service-sample/pkg/usecase"
 	logger "github.com/enercity/lib-logger/v3"
+	"github.com/matthiasmohr/mm-vertragspreisanpasser-service/pkg/model/dto"
+	"github.com/matthiasmohr/mm-vertragspreisanpasser-service/pkg/repository"
+	"github.com/matthiasmohr/mm-vertragspreisanpasser-service/pkg/usecase"
 )
 
 type Loader struct {

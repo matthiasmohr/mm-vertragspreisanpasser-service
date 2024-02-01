@@ -3,8 +3,8 @@ package handler
 import (
 	"net/http"
 
-	"github.com/enercity/be-service-sample/pkg/model/dto"
 	"github.com/labstack/echo/v4"
+	"github.com/matthiasmohr/mm-vertragspreisanpasser-service/pkg/model/dto"
 )
 
 // AppStatus manages status related endpoints.

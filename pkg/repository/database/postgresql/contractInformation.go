@@ -6,7 +6,7 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/enercity/be-service-sample/pkg/model/domain"
+	"github.com/matthiasmohr/mm-vertragspreisanpasser-service/pkg/model/domain"
 	"gorm.io/gorm"
 )
 
@@ -38,7 +38,7 @@ func (ci *ContractInformation) CountAllWithFilters(filters map[string]interface{
 		Limit(limit).
 		Offset(offset)
 
-	applyFilters(stmt, filters)
+	applyFiltersToContractInformation(stmt, filters)
 
 	err := stmt.Count(&count).Error
 	if err != nil {
@@ -63,7 +63,7 @@ func (ci *ContractInformation) Find(filters map[string]interface{}, limit, offse
 }
 
 func applyFiltersToContractInformation(stmt *gorm.DB, filters map[string]interface{}) {
-	// TODO
+	// TODO: Extent if required
 	applyLikeFilterContractInformation(stmt, filters, "mba")
 	applyLikeFilterContractInformation(stmt, filters, "productSerialNumber")
 }

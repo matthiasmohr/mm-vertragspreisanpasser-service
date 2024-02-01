@@ -1,6 +1,6 @@
 package repository
 
-import "github.com/enercity/be-service-sample/pkg/model/domain"
+import "github.com/matthiasmohr/mm-vertragspreisanpasser-service/pkg/model/domain"
 
 type Customer interface {
 	Find(filters map[string]interface{}, limit, offset int) ([]*domain.Customer, error)

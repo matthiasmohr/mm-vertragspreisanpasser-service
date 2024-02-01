@@ -2,11 +2,11 @@ package priceChangeOrder
 
 import (
 	"context"
-	"github.com/enercity/be-service-sample/pkg/model/domain"
-	"github.com/enercity/be-service-sample/pkg/model/dto"
-	"github.com/enercity/be-service-sample/pkg/repository"
-	"github.com/enercity/be-service-sample/pkg/usecase"
 	logger "github.com/enercity/lib-logger/v3"
+	"github.com/matthiasmohr/mm-vertragspreisanpasser-service/pkg/model/domain"
+	"github.com/matthiasmohr/mm-vertragspreisanpasser-service/pkg/model/dto"
+	"github.com/matthiasmohr/mm-vertragspreisanpasser-service/pkg/repository"
+	"github.com/matthiasmohr/mm-vertragspreisanpasser-service/pkg/usecase"
 )
 
 type Creator struct {
@@ -45,7 +45,7 @@ func (c *Creator) Create(ctx context.Context, logEntry logger.Entry, req *dto.Cr
 		req.AgentHintFlag,
 		req.AgentHintText,
 		req.CommunicationFlag,
-		req.CommunictionTime,
+		req.CommunicationTime,
 	)
 	if err != nil {
 		logEntry.WithError(err).Error("unable to create a price change order")

@@ -1,7 +1,7 @@
 package mock
 
 import (
-	"github.com/enercity/be-service-sample/pkg/repository"
+	"github.com/matthiasmohr/mm-vertragspreisanpasser-service/pkg/repository"
 	"github.com/stretchr/testify/mock"
 )
 

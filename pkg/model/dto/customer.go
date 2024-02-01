@@ -1,6 +1,6 @@
 package dto
 
-import "github.com/enercity/be-service-sample/pkg/model/domain"
+import "github.com/matthiasmohr/mm-vertragspreisanpasser-service/pkg/model/domain"
 
 type CreateCustomerRequest struct {
 	FirstName string `json:"firstName" validate:"required,gt=0"`
