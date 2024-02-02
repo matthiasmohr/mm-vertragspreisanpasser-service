@@ -63,8 +63,9 @@ class PriceChangeRule {
     ..
     OrderInPriceChangeRuleCollection
     --
-    NewPriceChangeRule()
-    RemovePriceChangeRule()
+    Create()
+    List()
+    Remove()
     MoveUpPriceChangeRule()
     MoveDownPriceChangeRule()
 }
@@ -175,5 +176,5 @@ PriceChangeRuleCollection "1" -- "n" PriceChangeRule
 PriceChangeRuleCollection "1" -- "n" PriceChangeOrder
 Contract "1" -- "n" ContractInformation
 Contract "1" -- "n" PriceChangeOrder
-PriceChangeOrder "1" -- "n" PriceChangeExecution
+PriceChangeOrder "1" -- "1" PriceChangeExecution
 @enduml

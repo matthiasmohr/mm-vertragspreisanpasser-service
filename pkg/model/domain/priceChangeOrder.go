@@ -5,12 +5,13 @@ import (
 )
 
 type PriceChangeOrder struct {
-	Id              UUID
-	Created_at      time.Time
-	PriceChangeRule string
+	Id                    UUID
+	Created_at            time.Time
+	PriceChangeRuleId     UUID
+	ContractInformationId UUID
 
 	ProductSerialNumber string
-	Status              string
+	Status              PriceChangeOrderStatus
 
 	PriceValidSince     time.Time
 	CurrentBaseCosts    float64
@@ -35,7 +36,8 @@ type PriceChangeOrder struct {
 }
 
 func NewPriceChangeOrder(
-	priceChangeRule string,
+	priceChangeRuleId string,
+	contractInformationId string,
 	productSerialNumber string,
 
 	priceValidSince time.Time,
@@ -64,16 +66,26 @@ func NewPriceChangeOrder(
 		return nil, err
 	}
 	now := time.Now()
-	status := "new"
+
+	pcriUuid, err := ParseUUID(priceChangeRuleId)
+	if err != nil {
+		return nil, err
+	}
+
+	coUuid, err := ParseUUID(contractInformationId)
+	if err != nil {
+		return nil, err
+	}
 
 	return &PriceChangeOrder{
 		Id:         id,
 		Created_at: now,
 
-		PriceChangeRule: priceChangeRule,
+		PriceChangeRuleId:     pcriUuid,
+		ContractInformationId: coUuid,
 
 		ProductSerialNumber: productSerialNumber,
-		Status:              status,
+		Status:              PriceChangeOrderStatusNew,
 
 		PriceValidSince:     priceValidSince,
 		CurrentBaseCosts:    currentBaseCosts,
@@ -96,4 +108,18 @@ func NewPriceChangeOrder(
 		CommunicationFlag:  communicationFlag,
 		CommunicationTime:  communicationTime,
 	}, nil
+}
+
+// Listing of possible Price Change Order statuses.
+const (
+	PriceChangeOrderStatusNew              = PriceChangeOrderStatus("new")
+	PriceChangeOrderStatusExecutionCreated = PriceChangeOrderStatus("Execution Created")
+)
+
+// PriceChangeOrderStatus represents one of the possible price change order statuses.
+type PriceChangeOrderStatus string
+
+// String returns the string value of the PriceChangeOrderStatus.
+func (s PriceChangeOrderStatus) String() string {
+	return string(s)
 }

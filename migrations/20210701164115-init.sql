@@ -26,39 +26,44 @@ CREATE TABLE price_adjustment_projects (
 
 CREATE TABLE price_change_rule_collections(
     id UUID PRIMARY KEY,
-    priceAdjustmentProject UUID NOT NULL
+    price_adjustment_project_id VARCHAR(255) NOT NULL,
+    created_at  TIMESTAMPTZ
 );
 
 CREATE TABLE price_change_rules
 (
     id                         UUID PRIMARY KEY,
-    priceChangeRuleCollection  UUID,
+    price_change_rule_collection_id  UUID,
 
-    restoreMarginAtSignup      BOOL,
-    changeBasePriceNetToAmount NUMERIC(8, 2),
-    changeKwhPriceNetToAmount  NUMERIC(8, 2),
-    changeBasePriceNetByAmount NUMERIC(8, 2),
-    changeKwhPriceNetByAmount  NUMERIC(8, 2),
-    changeBasePriceNetByFactor NUMERIC(8, 2),
-    changeKwhPriceNetByFactor  NUMERIC(8, 2),
+    restore_margin_at_signup      BOOL,
+    change_base_price_net_to_amount NUMERIC(8, 2),
+    change_kwh_price_net_to_amount  NUMERIC(8, 2),
+    change_base_price_net_by_amount NUMERIC(8, 2),
+    change_kwh_price_net_by_amount  NUMERIC(8, 2),
+    change_base_price_net_by_factor NUMERIC(8, 2),
+    change_kwh_price_net_by_factor  NUMERIC(8, 2),
 
-    validForProductNames       VARCHAR(1024),
-    validForCommodity          VARCHAR(255),
-    excludeOrderDateFrom       TIMESTAMPTZ,
-    excludeStartDateFrom       TIMESTAMPTZ,
-    excludeEndDateUntil        TIMESTAMPTZ,
-    excludeLastPriceChangeSince TIMESTAMPTZ,
+    valid_for_product_names       VARCHAR(1024),
+    valid_for_commodity          VARCHAR(255),
+    exclude_order_date_from       TIMESTAMPTZ,
+    exclude_start_date_from       TIMESTAMPTZ,
+    exclude_end_date_until        TIMESTAMPTZ,
+    exclude_last_price_change_since TIMESTAMPTZ,
 
-    limitToCataloguePriceNet        BOOL,
-    limitToUpperBasePriceNet        NUMERIC(8, 2),
-    limitToUpperKwhPriceNet         NUMERIC(8, 2),
-    limitToLowerBasePriceNet        NUMERIC(8, 2),
-    limitToLowerKwhPriceNet         NUMERIC(8, 2),
-    limitToMaxChangeBasePriceNet    NUMERIC(8, 2),
-    limitToMaxChangeKwhPriceNet     NUMERIC(8, 2),
-    limitToMinChangeBasePriceNet    NUMERIC(8, 2),
-    limitToMinChangeKwhPriceNet     NUMERIC(8, 2),
-    orderInPriceChangeRuleCollection INT
+    limit_to_catalogue_price_net        BOOL,
+    limit_to_upper_base_price_net        NUMERIC(8, 2),
+    limit_to_upper_kwh_price_net         NUMERIC(8, 2),
+    limit_to_lower_base_price_net        NUMERIC(8, 2),
+    limit_to_lower_kwh_price_net         NUMERIC(8, 2),
+    limit_to_max_change_base_price_net    NUMERIC(8, 2),
+    limit_to_max_change_kwh_price_net     NUMERIC(8, 2),
+    limit_to_min_change_base_price_net    NUMERIC(8, 2),
+    limit_to_min_change_kwh_price_net     NUMERIC(8, 2),
+    order_in_price_change_rule_collection INT,
+
+        price_adjustment_project_id VARCHAR(255),
+    created_at  TIMESTAMPTZ
+
 );
 
 
@@ -92,7 +97,8 @@ CREATE TABLE  contract_informations (
 CREATE TABLE price_change_orders (
     id                      UUID PRIMARY KEY,
     created_at               TIMESTAMPTZ,
-    price_change_rule         VARCHAR(255),
+    price_change_rule_id         UUID,
+    contract_information_id    UUID NOT NULL,
 
     product_serial_number     VARCHAR(255),
     status                  VARCHAR(255),

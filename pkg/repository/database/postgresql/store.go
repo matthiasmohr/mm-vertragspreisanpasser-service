@@ -14,11 +14,13 @@ import (
 )
 
 type Repository struct {
-	db                   *gorm.DB
-	customer             repository.Customer
-	contractInformation  repository.ContractInformation
-	priceChangeOrder     repository.PriceChangeOrder
-	priceChangeExecution repository.PriceChangeExecution
+	db                        *gorm.DB
+	customer                  repository.Customer
+	contractInformation       repository.ContractInformation
+	priceChangeOrder          repository.PriceChangeOrder
+	priceChangeExecution      repository.PriceChangeExecution
+	priceChangeRule           repository.PriceChangeRule
+	priceChangeRuleCollection repository.PriceChangeRuleCollection
 }
 
 func New(cfg Config, lg logger.Logger) (repository.Store, error) {
@@ -37,11 +39,13 @@ func New(cfg Config, lg logger.Logger) (repository.Store, error) {
 	}
 
 	return &Repository{
-		db:                   db,
-		customer:             newCustomer(db),
-		contractInformation:  newContractInformation(db),
-		priceChangeOrder:     newPriceChangeOrder(db),
-		priceChangeExecution: newPriceChangeExecution(db),
+		db:                        db,
+		customer:                  newCustomer(db),
+		contractInformation:       newContractInformation(db),
+		priceChangeOrder:          newPriceChangeOrder(db),
+		priceChangeExecution:      newPriceChangeExecution(db),
+		priceChangeRule:           newPriceChangeRule(db),
+		priceChangeRuleCollection: newPriceChangeRuleCollection(db),
 	}, nil
 }
 
@@ -123,4 +127,10 @@ func (r *Repository) PriceChangeOrder() repository.PriceChangeOrder {
 
 func (r *Repository) PriceChangeExecution() repository.PriceChangeExecution {
 	return r.priceChangeExecution
+}
+func (r *Repository) PriceChangeRule() repository.PriceChangeRule {
+	return r.priceChangeRule
+}
+func (r *Repository) PriceChangeRuleCollection() repository.PriceChangeRuleCollection {
+	return r.priceChangeRuleCollection
 }

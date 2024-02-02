@@ -66,7 +66,6 @@ type ExecutePriceChangeExecutionResponse struct {
 }
 
 func PriceChangeExecutionFromDomain(c *domain.PriceChangeExecution) PriceChangeExecution {
-	// TODO
 	return PriceChangeExecution{
 		Id:                  c.Id,
 		CreatedAt:           c.CreatedAt,

@@ -24,8 +24,11 @@ func NewCreator(
 func (c *Creator) Create(ctx context.Context, logEntry logger.Entry, req *dto.CreatePriceChangeOrderRequest) error {
 	logEntry.WithField("req", req).Debug("about to create a new price change order")
 
+	// TODO: CHECK IF THERE IS ALREADY AN CREATED PRICE CHANGE ORDER ON THE CONTRACT INFORMATION ID NOT EXECUTED
+
 	priceChangeOrder, err := domain.NewPriceChangeOrder(
-		"manual",
+		"00000000-0000-0000-0000-000000000000",
+		req.ContractInformationId,
 		req.ProductSerialNumber,
 		req.PriceValidSince,
 		req.CurrentBaseCosts,

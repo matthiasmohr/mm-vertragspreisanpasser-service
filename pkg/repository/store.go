@@ -10,4 +10,6 @@ type Store interface {
 	ContractInformation() ContractInformation
 	PriceChangeOrder() PriceChangeOrder
 	PriceChangeExecution() PriceChangeExecution
+	PriceChangeRule() PriceChangeRule
+	PriceChangeRuleCollection() PriceChangeRuleCollection
 }

@@ -11,6 +11,8 @@ import (
 	customerUsecases "github.com/matthiasmohr/mm-vertragspreisanpasser-service/pkg/usecase/customer"
 	priceChangeExecutionUsecases "github.com/matthiasmohr/mm-vertragspreisanpasser-service/pkg/usecase/priceChangeExecution"
 	priceChangeOrderUsecases "github.com/matthiasmohr/mm-vertragspreisanpasser-service/pkg/usecase/priceChangeOrder"
+	priceChangeRuleUsecases "github.com/matthiasmohr/mm-vertragspreisanpasser-service/pkg/usecase/priceChangeRule"
+	priceChangeRuleCollectionUsecases "github.com/matthiasmohr/mm-vertragspreisanpasser-service/pkg/usecase/priceChangeRuleCollection"
 	"github.com/pkg/errors"
 )
 
@@ -32,6 +34,15 @@ func Run(cfg *Config, lg logger.Logger) error {
 	contractInformationCreateUseCase := contractInformationUsecases.NewCreator(store)
 	contractInformationListerUseCase := contractInformationUsecases.NewLister(store)
 	contractInformationFinderUseCase := contractInformationUsecases.NewFinder(store)
+
+	priceChangeRuleCollectionListerUseCase := priceChangeRuleCollectionUsecases.NewLister(store)
+	priceChangeRuleCollectionCreaterUseCase := priceChangeRuleCollectionUsecases.NewCreator(store)
+	priceChangeRuleCollectionExecuterUseCase := priceChangeRuleCollectionUsecases.NewExecuter(store)
+	priceChangeRuleCollectionGetterUseCase := priceChangeRuleCollectionUsecases.NewGetter(store)
+
+	priceChangeRuleListerUseCase := priceChangeRuleUsecases.NewLister(store)
+	priceChangeRuleCreaterUseCase := priceChangeRuleUsecases.NewCreator(store)
+	priceChangeRuleRemoverUseCase := priceChangeRuleUsecases.NewRemover(store)
 
 	priceChangeOrderCreateUseCase := priceChangeOrderUsecases.NewCreator(store)
 	priceChangeOrderListerUseCase := priceChangeOrderUsecases.NewLister(store)
@@ -61,6 +72,8 @@ func Run(cfg *Config, lg logger.Logger) error {
 
 	customerHandler := handler.NewCustomer(customerCreateUsecase, customerLoaderUsecase, customerFinderUsecase, lg)
 	contractInformationHandler := handler.NewContractInformation(contractInformationCreateUseCase, contractInformationListerUseCase, contractInformationFinderUseCase, lg)
+	priceChangeRuleCollectionHandler := handler.NewPriceChangeRuleCollection(priceChangeRuleCollectionListerUseCase, priceChangeRuleCollectionCreaterUseCase, priceChangeRuleCollectionExecuterUseCase, priceChangeRuleCollectionGetterUseCase, lg)
+	priceChangeRuleHandler := handler.NewPriceChangeRule(priceChangeRuleListerUseCase, priceChangeRuleCreaterUseCase, priceChangeRuleRemoverUseCase, lg)
 	priceChangeOrderHandler := handler.NewPriceChangeOrder(priceChangeOrderCreateUseCase, priceChangeOrderListerUseCase, priceChangeOrderFinderUseCase, priceChangeOrderExecuteUseCase, lg)
 	priceChangeExecutionHandler := handler.NewPriceChangeExecution(priceChangeExecutionListerUseCase, priceChangeExecutionFinderUseCase, priceChangeExecutionExecuteUseCase, lg)
 
@@ -86,6 +99,17 @@ func Run(cfg *Config, lg logger.Logger) error {
 	contractInformationGroup.GET("", contractInformationHandler.List)
 	contractInformationGroup.GET("/find", contractInformationHandler.Find)
 	contractInformationGroup.POST("", contractInformationHandler.Create)
+
+	priceChangeRuleCollectionGroup := v1.Group("/pricechangerulecollection")
+	priceChangeRuleCollectionGroup.GET("", priceChangeRuleCollectionHandler.List)
+	priceChangeRuleCollectionGroup.GET("/", priceChangeRuleCollectionHandler.Get)
+	priceChangeRuleCollectionGroup.POST("", priceChangeRuleCollectionHandler.Create)
+	priceChangeRuleCollectionGroup.POST("/execute", priceChangeRuleCollectionHandler.Execute)
+
+	priceChangeRuleGroup := v1.Group("/pricechangerule")
+	priceChangeRuleGroup.GET("", priceChangeRuleHandler.List)
+	priceChangeRuleGroup.POST("", priceChangeRuleHandler.Create)
+	priceChangeRuleGroup.DELETE("", priceChangeRuleHandler.Delete)
 
 	priceChangeOrderGroup := v1.Group("/pricechangeorder")
 	priceChangeOrderGroup.GET("", priceChangeOrderHandler.List)

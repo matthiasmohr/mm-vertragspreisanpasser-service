@@ -32,7 +32,7 @@ func (f *Executer) Execute(ctx context.Context, logEntry logger.Entry, req *dto.
 
 	pricechangeorders, err := f.store.PriceChangeOrder().FindByIDs(uuid)
 	if err != nil || len(pricechangeorders) == 0 {
-		logEntry.WithError(err).Warning("unable to retrieve database information")
+		logEntry.WithError(err).Warning("price Change order not found")
 		return usecase.ErrDatabaseNotFound
 	}
 
