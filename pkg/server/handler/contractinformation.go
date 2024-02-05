@@ -26,26 +26,34 @@ type (
 			ctx context.Context, logEntry logger.Entry, req *dto.FindContractInformationRequest,
 		) (*dto.FindContractInformationsResponse, error)
 	}
+
+	contractInformationImporter interface {
+		Import(
+			ctx context.Context, logEntry logger.Entry, req *dto.ImportContractInformationRequest) (*dto.ImportContractInformationResponse, error)
+	}
 )
 
 type ContractInformation struct {
-	contractInformationCreater contractInformationCreater
-	contractInformationLister  contractInformationLister
-	contractInformationFinder  contractInformationFinder
-	logger                     logger.Logger
+	contractInformationCreater  contractInformationCreater
+	contractInformationLister   contractInformationLister
+	contractInformationFinder   contractInformationFinder
+	contractInformationImporter contractInformationImporter
+	logger                      logger.Logger
 }
 
 func NewContractInformation(
 	contractInformationCreatorUsecase contractInformationCreater,
 	contractInformationListerUsecase contractInformationLister,
 	contractInformationFinderUsecase contractInformationFinder,
+	contractInformationImporterUsecase contractInformationImporter,
 	lg logger.Logger,
 ) *ContractInformation {
 	return &ContractInformation{
-		contractInformationCreater: contractInformationCreatorUsecase,
-		contractInformationLister:  contractInformationListerUsecase,
-		contractInformationFinder:  contractInformationFinderUsecase,
-		logger:                     lg,
+		contractInformationCreater:  contractInformationCreatorUsecase,
+		contractInformationLister:   contractInformationListerUsecase,
+		contractInformationFinder:   contractInformationFinderUsecase,
+		contractInformationImporter: contractInformationImporterUsecase,
+		logger:                      lg,
 	}
 }
 
@@ -151,4 +159,27 @@ func (ci *ContractInformation) Find(echoCtx echo.Context) error {
 	}
 
 	return echoCtx.JSON(http.StatusOK, contractinformations)
+}
+
+func (ci *ContractInformation) Import(echoCtx echo.Context) error {
+	ctx, err := loadContext(echoCtx)
+	if err != nil {
+		return server.NewHTTPError(err)
+	}
+
+	logEntry := ci.logger.WithContext(ctx)
+
+	file := echoCtx.QueryParam("file")
+
+	req := &dto.ImportContractInformationRequest{File: file}
+	if err := bindAndValidate(req, echoCtx); err != nil {
+		return server.NewHTTPError(err)
+	}
+
+	res, err := ci.contractInformationImporter.Import(ctx, logEntry, req)
+	if err != nil {
+		return server.NewHTTPError(err)
+	}
+
+	return echoCtx.JSON(http.StatusOK, res)
 }

@@ -21,7 +21,7 @@ func NewGetter(
 	}
 }
 
-func (c *Creator) Get(ctx context.Context, logEntry logger.Entry, req *dto.GetPriceChangeRuleCollectionRequest) (*dto.GetPriceChangeRuleCollectionResponse, error) {
+func (g *Getter) Get(ctx context.Context, logEntry logger.Entry, req *dto.GetPriceChangeRuleCollectionRequest) (*dto.GetPriceChangeRuleCollectionResponse, error) {
 	logEntry.WithField("req", req).Debug("about to fetch a price change RuleCollection")
 
 	res := &dto.GetPriceChangeRuleCollectionResponse{}
@@ -33,7 +33,7 @@ func (c *Creator) Get(ctx context.Context, logEntry logger.Entry, req *dto.GetPr
 		return nil, usecase.ErrDomainInternal
 	}
 
-	priceChangeRuleCollections, err := c.store.PriceChangeRuleCollection().FindByIDs(uuid)
+	priceChangeRuleCollections, err := g.store.PriceChangeRuleCollection().FindByIDs(uuid)
 	if err != nil || len(priceChangeRuleCollections) != 1 {
 		logEntry.WithContext(ctx).WithError(err).Error("unable to fetch price change RuleCollection in a db")
 
@@ -42,7 +42,17 @@ func (c *Creator) Get(ctx context.Context, logEntry logger.Entry, req *dto.GetPr
 
 	res.RuleCollection = dto.PriceChangeRuleCollectionFromDomain(priceChangeRuleCollections[0])
 
-	// Get the nested priceChangeRules for the collection
+	// Get the nested price Change Rules
+	priceChangeRules, err := g.store.PriceChangeRule().FindByFindByPriceChangeRuleCollectionId(uuid)
+	if err != nil {
+		logEntry.WithContext(ctx).WithError(err).Error("unable to fetch price change Rules nested in the price change rule collection")
+		return nil, usecase.ErrDatabaseInternal
+	}
+
+	res.Rules = make([]dto.PriceChangeRule, 0, len(priceChangeRules))
+	for _, c := range priceChangeRules {
+		res.Rules = append(res.Rules, dto.PriceChangeRuleFromDomain(c))
+	}
 
 	return res, nil
 }

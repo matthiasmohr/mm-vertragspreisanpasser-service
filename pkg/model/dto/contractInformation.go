@@ -94,6 +94,16 @@ func (cifr *FindContractInformationRequest) Map() map[string]interface{} {
 	return m
 }
 
+type ImportContractInformationRequest struct {
+	File string
+}
+
+type ImportContractInformationResponse struct {
+	File        string
+	Imported    int
+	NotImported int
+}
+
 func ContractInformationFromDomain(c *domain.ContractInformation) ContractInformation {
 	return ContractInformation{
 		ID:                  c.ID.String(),

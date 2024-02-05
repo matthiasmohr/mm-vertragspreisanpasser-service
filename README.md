@@ -105,8 +105,8 @@ A list of ToDos
 - Create Nested PriceChangeRule in PriceChangeRuleCollection
 - Validate the range of all DTO inputs
 - Make "NotAllowed" to an expected (non 500) error
-- Build a 1:n relationship between contractInformation and PriceChangeOrder
 - ggf. PriceChangeExecution einkürzen um die Parameter die auch in PriceChangeOrder stehen
 
 Smaller ToDo:
 - Include in PriceChangeRule: "valid earliest" // "respect Preisbindungsfristen"
+- Add to model ContractInformation: SignupKwhMargin // SignupBaseMargin

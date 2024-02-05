@@ -57,6 +57,12 @@ func NewContractInformation(
 	if err != nil {
 		return nil, err
 	}
+	if currentBasePriceNet == 0 {
+		currentBasePriceNet = currentBaseCosts + currentBaseMargin
+	}
+	if currentKwhPriceNet == 0 {
+		currentKwhPriceNet = currentKwhCosts + currentKwhMargin
+	}
 
 	return &ContractInformation{
 		ID:           id,

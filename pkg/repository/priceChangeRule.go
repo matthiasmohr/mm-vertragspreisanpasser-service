@@ -7,6 +7,7 @@ type PriceChangeRule interface {
 	CountAllWithFilters(filters map[string]interface{}, limit, offset int) (int64, error)
 	Load(limit, offset int) ([]*domain.PriceChangeRule, error)
 	FindByIDs(ids ...domain.UUID) ([]*domain.PriceChangeRule, error)
+	FindByFindByPriceChangeRuleCollectionId(id domain.UUID) ([]*domain.PriceChangeRule, error)
 	CountAll() (int64, error)
 	Save(priceChangeRule *domain.PriceChangeRule) error
 	Update(priceChangeRule *domain.PriceChangeRule) error

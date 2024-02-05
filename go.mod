@@ -49,6 +49,7 @@ require (
 	github.com/go-openapi/spec v0.20.4 // indirect
 	github.com/go-openapi/swag v0.19.15 // indirect
 	github.com/go-sql-driver/mysql v1.6.0 // indirect
+	github.com/gocarina/gocsv v0.0.0-20231116093920-b87c2d0e983a // indirect
 	github.com/godror/godror v0.40.4 // indirect
 	github.com/godror/knownpb v0.1.1 // indirect
 	github.com/golang-jwt/jwt v3.2.2+incompatible // indirect

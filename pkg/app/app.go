@@ -34,6 +34,7 @@ func Run(cfg *Config, lg logger.Logger) error {
 	contractInformationCreateUseCase := contractInformationUsecases.NewCreator(store)
 	contractInformationListerUseCase := contractInformationUsecases.NewLister(store)
 	contractInformationFinderUseCase := contractInformationUsecases.NewFinder(store)
+	contractInformationImporterUseCase := contractInformationUsecases.NewImporter(store)
 
 	priceChangeRuleCollectionListerUseCase := priceChangeRuleCollectionUsecases.NewLister(store)
 	priceChangeRuleCollectionCreaterUseCase := priceChangeRuleCollectionUsecases.NewCreator(store)
@@ -56,7 +57,6 @@ func Run(cfg *Config, lg logger.Logger) error {
 	validator, err := validation.NewValidator()
 	if err != nil {
 		lg.WithError(err).Error("Couldn't create validator")
-
 		return errors.Wrap(err, "error on creating new Validator")
 	}
 
@@ -71,7 +71,7 @@ func Run(cfg *Config, lg logger.Logger) error {
 	)
 
 	customerHandler := handler.NewCustomer(customerCreateUsecase, customerLoaderUsecase, customerFinderUsecase, lg)
-	contractInformationHandler := handler.NewContractInformation(contractInformationCreateUseCase, contractInformationListerUseCase, contractInformationFinderUseCase, lg)
+	contractInformationHandler := handler.NewContractInformation(contractInformationCreateUseCase, contractInformationListerUseCase, contractInformationFinderUseCase, contractInformationImporterUseCase, lg)
 	priceChangeRuleCollectionHandler := handler.NewPriceChangeRuleCollection(priceChangeRuleCollectionListerUseCase, priceChangeRuleCollectionCreaterUseCase, priceChangeRuleCollectionExecuterUseCase, priceChangeRuleCollectionGetterUseCase, lg)
 	priceChangeRuleHandler := handler.NewPriceChangeRule(priceChangeRuleListerUseCase, priceChangeRuleCreaterUseCase, priceChangeRuleRemoverUseCase, lg)
 	priceChangeOrderHandler := handler.NewPriceChangeOrder(priceChangeOrderCreateUseCase, priceChangeOrderListerUseCase, priceChangeOrderFinderUseCase, priceChangeOrderExecuteUseCase, lg)
@@ -99,10 +99,11 @@ func Run(cfg *Config, lg logger.Logger) error {
 	contractInformationGroup.GET("", contractInformationHandler.List)
 	contractInformationGroup.GET("/find", contractInformationHandler.Find)
 	contractInformationGroup.POST("", contractInformationHandler.Create)
+	contractInformationGroup.POST("/import", contractInformationHandler.Import)
 
 	priceChangeRuleCollectionGroup := v1.Group("/pricechangerulecollection")
 	priceChangeRuleCollectionGroup.GET("", priceChangeRuleCollectionHandler.List)
-	priceChangeRuleCollectionGroup.GET("/", priceChangeRuleCollectionHandler.Get)
+	priceChangeRuleCollectionGroup.GET("/get", priceChangeRuleCollectionHandler.Get)
 	priceChangeRuleCollectionGroup.POST("", priceChangeRuleCollectionHandler.Create)
 	priceChangeRuleCollectionGroup.POST("/execute", priceChangeRuleCollectionHandler.Execute)
 

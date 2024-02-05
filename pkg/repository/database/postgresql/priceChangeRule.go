@@ -97,6 +97,23 @@ func (ci *PriceChangeRule) FindByIDs(ids ...domain.UUID) ([]*domain.PriceChangeR
 	return priceChangeRules, err
 }
 
+func (ci *PriceChangeRule) FindByFindByPriceChangeRuleCollectionId(id domain.UUID) ([]*domain.PriceChangeRule, error) {
+	var priceChangeRules []*domain.PriceChangeRule
+
+	//err := ci.db.Find(&priceChangeRules).Error
+	err := ci.db.Where("price_change_rule_collection_id = ?", id).Find(&priceChangeRules).Error
+
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, nil
+		}
+
+		return nil, err
+	}
+
+	return priceChangeRules, err
+}
+
 func (ci *PriceChangeRule) Save(pricechangerule *domain.PriceChangeRule) error {
 	return ci.db.Create(pricechangerule).Error
 }
