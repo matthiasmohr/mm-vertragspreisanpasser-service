@@ -20,10 +20,10 @@ func newContractInformation(db *gorm.DB) *ContractInformation {
 	}
 }
 
-func (c *ContractInformation) CountAll() (int64, error) {
+func (ci *ContractInformation) CountAll() (int64, error) {
 	var count int64
 
-	err := c.db.Model(&ContractInformation{}).Count(&count).Error
+	err := ci.db.Model(&ContractInformation{}).Count(&count).Error
 	if err != nil {
 		return count, err
 	}
@@ -66,6 +66,11 @@ func applyFiltersToContractInformation(stmt *gorm.DB, filters map[string]interfa
 	// TODO: Extent if required
 	applyLikeFilterContractInformation(stmt, filters, "mba")
 	applyLikeFilterContractInformation(stmt, filters, "productSerialNumber")
+	applyLikeFilterContractInformation(stmt, filters, "productName")
+	applyLikeFilterContractInformation(stmt, filters, "commodity")
+	applyLikeFilterContractInformation(stmt, filters, "inArea")
+	applyLikeFilterContractInformation(stmt, filters, "status")
+
 }
 
 func applyLikeFilterContractInformation(stmt *gorm.DB, filters map[string]interface{}, key string) {
@@ -97,6 +102,14 @@ func (ci *ContractInformation) Load(limit, offset int) ([]*domain.ContractInform
 	}
 
 	return contractInformations, err
+}
+
+func (ci *ContractInformation) FindByID(id domain.UUID) (*domain.ContractInformation, error) {
+	var contractInformation *domain.ContractInformation
+
+	err := ci.db.First(&contractInformation, "id = ?", id).Error
+
+	return contractInformation, err
 }
 
 func (ci *ContractInformation) Save(contractinformation *domain.ContractInformation) error {

@@ -20,6 +20,8 @@ type ContractInformation struct {
 	PriceChangePlanned  bool
 
 	PriceValidSince     time.Time
+	SignupKwhMargin     float64
+	SignupBaseMargin    float64
 	CurrentBaseCosts    float64
 	CurrentKwhCosts     float64
 	CurrentBaseMargin   float64
@@ -44,6 +46,8 @@ func NewContractInformation(
 	priceChangePlanned bool,
 
 	priceValidSince time.Time,
+	signupKwhMargin float64,
+	signupBaseMargin float64,
 	currentBaseCosts float64,
 	currentKwhCosts float64,
 	currentBaseMargin float64,
@@ -81,6 +85,8 @@ func NewContractInformation(
 		PriceGuaranteeUntil: priceGuaranteeUntil,
 		PriceChangePlanned:  priceChangePlanned,
 
+		SignupKwhMargin:     signupKwhMargin,
+		SignupBaseMargin:    signupBaseMargin,
 		PriceValidSince:     priceValidSince,
 		CurrentBaseCosts:    currentBaseCosts,
 		CurrentKwhCosts:     currentKwhCosts,
@@ -90,4 +96,20 @@ func NewContractInformation(
 		CurrentKwhPriceNet:  currentKwhPriceNet,
 		AnnualConsumption:   annualConsumption,
 	}, nil
+}
+
+func (ci *ContractInformation) ProposedBasePriceNet() float64 {
+	if ci.SignupBaseMargin != 0 && ci.CurrentBaseCosts != 0 {
+		return ci.SignupBaseMargin + ci.CurrentBaseCosts
+	} else {
+		return 0
+	}
+}
+
+func (ci *ContractInformation) ProposedKwhPriceNet() float64 {
+	if ci.SignupKwhMargin != 0 && ci.CurrentKwhCosts != 0 {
+		return ci.SignupKwhMargin + ci.CurrentKwhCosts
+	} else {
+		return 0
+	}
 }

@@ -43,7 +43,7 @@ class PriceChangeRule {
     ChangeBasePriceNetByFactor: float
     ChangeKwhPriceNetByFactor: float
     // Define Validity & Exclutions
-	ValidForProductNames: []string
+	ValidForProductName: []string
 	ValidForCommodity: string
 	ExcludeOrderDateFrom: DateTime
 	ExcludeStartDateFrom: DateTime

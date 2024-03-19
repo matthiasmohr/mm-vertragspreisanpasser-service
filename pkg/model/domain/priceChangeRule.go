@@ -17,7 +17,7 @@ type PriceChangeRule struct {
 	ChangeBasePriceNetByFactor float64
 	ChangeKwhPriceNetByFactor  float64
 
-	ValidForProductNames        string
+	ValidForProductName         string
 	ValidForCommodity           string
 	ExcludeOrderDateFrom        time.Time
 	ExcludeStartDateFrom        time.Time
@@ -48,7 +48,7 @@ func NewPriceChangeRule(
 	changeBasePriceNetByFactor float64,
 	changeKwhPriceNetByFactor float64,
 
-	validForProductNames string,
+	validForProductName string,
 	validForCommodity string,
 	excludeOrderDateFrom time.Time,
 	excludeStartDateFrom time.Time,
@@ -84,7 +84,7 @@ func NewPriceChangeRule(
 		ChangeBasePriceNetByFactor: changeBasePriceNetByFactor,
 		ChangeKwhPriceNetByFactor:  changeKwhPriceNetByFactor,
 
-		ValidForProductNames:        validForProductNames,
+		ValidForProductName:         validForProductName,
 		ValidForCommodity:           validForCommodity,
 		ExcludeOrderDateFrom:        excludeOrderDateFrom,
 		ExcludeStartDateFrom:        excludeStartDateFrom,

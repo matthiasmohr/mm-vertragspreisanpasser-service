@@ -5,10 +5,10 @@ import (
 )
 
 type PriceChangeOrder struct {
-	Id                    UUID
-	Created_at            time.Time
-	PriceChangeRuleId     UUID
-	ContractInformationId UUID
+	Id                          UUID
+	Created_at                  time.Time
+	PriceChangeRuleCollectionId UUID
+	ContractInformationId       UUID
 
 	ProductSerialNumber string
 	Status              PriceChangeOrderStatus
@@ -36,7 +36,7 @@ type PriceChangeOrder struct {
 }
 
 func NewPriceChangeOrder(
-	priceChangeRuleId string,
+	priceChangeRuleCollectionId string,
 	contractInformationId string,
 	productSerialNumber string,
 
@@ -67,7 +67,7 @@ func NewPriceChangeOrder(
 	}
 	now := time.Now()
 
-	pcriUuid, err := ParseUUID(priceChangeRuleId)
+	pcrcUuid, err := ParseUUID(priceChangeRuleCollectionId)
 	if err != nil {
 		return nil, err
 	}
@@ -81,8 +81,8 @@ func NewPriceChangeOrder(
 		Id:         id,
 		Created_at: now,
 
-		PriceChangeRuleId:     pcriUuid,
-		ContractInformationId: coUuid,
+		PriceChangeRuleCollectionId: pcrcUuid,
+		ContractInformationId:       coUuid,
 
 		ProductSerialNumber: productSerialNumber,
 		Status:              PriceChangeOrderStatusNew,

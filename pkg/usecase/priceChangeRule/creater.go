@@ -42,7 +42,7 @@ func (c *Creator) Create(ctx context.Context, logEntry logger.Entry, req *dto.Cr
 		req.ChangeBasePriceNetByFactor,
 		req.ChangeKwhPriceNetByFactor,
 
-		req.ValidForProductNames,
+		req.ValidForProductName,
 		req.ValidForCommodity,
 		req.ExcludeOrderDateFrom,
 		req.ExcludeStartDateFrom,

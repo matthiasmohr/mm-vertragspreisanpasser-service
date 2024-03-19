@@ -1,3 +1,11 @@
+-- +migrate Down
+DROP TABLE customers;
+DROP TABLE price_adjustment_projects;
+DROP TABLE price_change_rule_collections;
+DROP TABLE price_change_rules;
+DROP TABLE contract_informations;
+DROP TABLE price_change_orders;
+DROP TABLE price_change_executions;
 
 -- +migrate Up
 CREATE TABLE customers (
@@ -43,7 +51,7 @@ CREATE TABLE price_change_rules
     change_base_price_net_by_factor NUMERIC(8, 2),
     change_kwh_price_net_by_factor  NUMERIC(8, 2),
 
-    valid_for_product_names       VARCHAR(1024),
+    valid_for_product_name       VARCHAR(1024),
     valid_for_commodity          VARCHAR(255),
     exclude_order_date_from       TIMESTAMPTZ,
     exclude_start_date_from       TIMESTAMPTZ,
@@ -85,6 +93,8 @@ CREATE TABLE  contract_informations (
     price_change_planned  BOOL,
 
     price_valid_since     TIMESTAMPTZ,
+    signup_base_margin    NUMERIC(8, 2),
+    signup_kwh_margin     NUMERIC(8, 2),
     current_base_costs    NUMERIC(8, 2),
     current_kwh_costs     NUMERIC(8, 2),
     current_base_margin   NUMERIC(8, 2),
@@ -97,7 +107,7 @@ CREATE TABLE  contract_informations (
 CREATE TABLE price_change_orders (
     id                      UUID PRIMARY KEY,
     created_at               TIMESTAMPTZ,
-    price_change_rule_id         UUID,
+    price_change_rule_collection_id         UUID,
     contract_information_id    UUID NOT NULL,
 
     product_serial_number     VARCHAR(255),
@@ -147,11 +157,3 @@ CREATE TABLE price_change_executions (
     annual_consumption       NUMERIC(12, 4)
 );
 
--- +migrate Down
-DROP TABLE customers;
-DROP TABLE price_adjustment_projects;
-DROP TABLE price_change_rule_collections;
-DROP TABLE price_change_rules;
-DROP TABLE contract_informations;
-DROP TABLE price_change_orders;
-DROP TABLE price_change_executions;

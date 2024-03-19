@@ -6,7 +6,7 @@ import (
 )
 
 type ContractInformation struct {
-	ID           string
+	Id           string
 	SnapshotTime time.Time
 
 	Mba                 string
@@ -22,14 +22,18 @@ type ContractInformation struct {
 	PriceGuaranteeUntil time.Time
 	PriceChangePlanned  bool
 
-	PriceValidSince     time.Time
-	CurrentBaseCosts    float64
-	CurrentKwhCosts     float64
-	CurrentBaseMargin   float64
-	CurrentKwhMargin    float64
-	CurrentBasePriceNet float64
-	CurrentKwhPriceNet  float64
-	AnnualConsumption   float64
+	PriceValidSince      time.Time
+	SignupKwhMargin      float64
+	SignupBaseMargin     float64
+	CurrentBaseCosts     float64
+	CurrentKwhCosts      float64
+	CurrentBaseMargin    float64
+	CurrentKwhMargin     float64
+	CurrentBasePriceNet  float64
+	CurrentKwhPriceNet   float64
+	AnnualConsumption    float64
+	ProposedBasePriceNet float64
+	ProposedKwhPriceNet  float64
 }
 
 type CreateContractInformationRequest struct {
@@ -49,6 +53,8 @@ type CreateContractInformationRequest struct {
 	PriceChangePlanned  bool      `json:"priceChangePlanned"`
 
 	PriceValidSince     time.Time `json:"priceValidSince" validate:"required"`
+	SignupKwhMargin     float64   `json:"signupKwhMargin"`
+	SignupBaseMargin    float64   `json:"signupBaseMargin"`
 	CurrentBaseCosts    float64   `json:"currentBaseCosts" validate:"required"`
 	CurrentKwhCosts     float64   `json:"currentKwhCosts" validate:"required"`
 	CurrentBaseMargin   float64   `json:"currentBaseMargin" validate:"required"`
@@ -104,27 +110,35 @@ type ImportContractInformationResponse struct {
 	NotImported int
 }
 
+type GetContractInformationResponse struct {
+	Item ContractInformation `json:"item"`
+}
+
 func ContractInformationFromDomain(c *domain.ContractInformation) ContractInformation {
 	return ContractInformation{
-		ID:                  c.ID.String(),
-		Mba:                 c.Mba,
-		ProductSerialNumber: c.ProductSerialNumber,
-		ProductName:         c.ProductName,
-		InArea:              c.InArea,
-		Commodity:           c.Commodity,
-		OrderDate:           c.OrderDate,
-		StartDate:           c.StartDate,
-		EndDate:             c.EndDate,
-		Status:              c.Status,
-		PriceGuaranteeUntil: c.PriceGuaranteeUntil,
-		PriceChangePlanned:  c.PriceChangePlanned,
-		PriceValidSince:     c.PriceValidSince,
-		CurrentBaseCosts:    c.CurrentBaseCosts,
-		CurrentKwhCosts:     c.CurrentKwhCosts,
-		CurrentBaseMargin:   c.CurrentBaseMargin,
-		CurrentKwhMargin:    c.CurrentKwhMargin,
-		CurrentBasePriceNet: c.CurrentBasePriceNet,
-		CurrentKwhPriceNet:  c.CurrentKwhPriceNet,
-		AnnualConsumption:   c.AnnualConsumption,
+		Id:                   c.ID.String(),
+		Mba:                  c.Mba,
+		ProductSerialNumber:  c.ProductSerialNumber,
+		ProductName:          c.ProductName,
+		InArea:               c.InArea,
+		Commodity:            c.Commodity,
+		OrderDate:            c.OrderDate,
+		StartDate:            c.StartDate,
+		EndDate:              c.EndDate,
+		Status:               c.Status,
+		PriceGuaranteeUntil:  c.PriceGuaranteeUntil,
+		PriceChangePlanned:   c.PriceChangePlanned,
+		PriceValidSince:      c.PriceValidSince,
+		SignupBaseMargin:     c.SignupBaseMargin,
+		SignupKwhMargin:      c.SignupKwhMargin,
+		CurrentBaseCosts:     c.CurrentBaseCosts,
+		CurrentKwhCosts:      c.CurrentKwhCosts,
+		CurrentBaseMargin:    c.CurrentBaseMargin,
+		CurrentKwhMargin:     c.CurrentKwhMargin,
+		CurrentBasePriceNet:  c.CurrentBasePriceNet,
+		CurrentKwhPriceNet:   c.CurrentKwhPriceNet,
+		AnnualConsumption:    c.AnnualConsumption,
+		ProposedBasePriceNet: c.ProposedBasePriceNet(),
+		ProposedKwhPriceNet:  c.ProposedKwhPriceNet(),
 	}
 }

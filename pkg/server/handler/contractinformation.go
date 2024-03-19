@@ -31,6 +31,11 @@ type (
 		Import(
 			ctx context.Context, logEntry logger.Entry, req *dto.ImportContractInformationRequest) (*dto.ImportContractInformationResponse, error)
 	}
+
+	contractInformationGetter interface {
+		Get(
+			ctx context.Context, logEntry logger.Entry, id string) (*dto.GetContractInformationResponse, error)
+	}
 )
 
 type ContractInformation struct {
@@ -38,6 +43,7 @@ type ContractInformation struct {
 	contractInformationLister   contractInformationLister
 	contractInformationFinder   contractInformationFinder
 	contractInformationImporter contractInformationImporter
+	contractInformationGetter   contractInformationGetter
 	logger                      logger.Logger
 }
 
@@ -46,6 +52,7 @@ func NewContractInformation(
 	contractInformationListerUsecase contractInformationLister,
 	contractInformationFinderUsecase contractInformationFinder,
 	contractInformationImporterUsecase contractInformationImporter,
+	contractInformationGetterUsecase contractInformationGetter,
 	lg logger.Logger,
 ) *ContractInformation {
 	return &ContractInformation{
@@ -53,6 +60,7 @@ func NewContractInformation(
 		contractInformationLister:   contractInformationListerUsecase,
 		contractInformationFinder:   contractInformationFinderUsecase,
 		contractInformationImporter: contractInformationImporterUsecase,
+		contractInformationGetter:   contractInformationGetterUsecase,
 		logger:                      lg,
 	}
 }
@@ -89,6 +97,24 @@ func (ci *ContractInformation) Create(echoCtx echo.Context) error {
 	}
 
 	return echoCtx.NoContent(http.StatusOK)
+}
+
+func (ci *ContractInformation) Get(echoCtx echo.Context) error {
+	ctx, err := loadContext(echoCtx)
+	if err != nil {
+		return server.NewHTTPError(err)
+	}
+
+	logEntry := ci.logger.WithContext(ctx)
+
+	id := echoCtx.Param("id")
+
+	contractInformation, err := ci.contractInformationGetter.Get(ctx, logEntry, id)
+	if err != nil || contractInformation == nil {
+		return echoCtx.JSON(http.StatusNotFound, nil)
+	}
+
+	return echoCtx.JSON(http.StatusOK, contractInformation)
 }
 
 // Contract Informations returns a list of existing ContractInformations.

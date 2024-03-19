@@ -100,13 +100,14 @@ If you don't want files to be checked or written to by Prettier, put them into `
 - [Eventing](https://lynqtech.atlassian.net/wiki/x/vAj3G)
 - [Static Code Analysis](https://lynqtech.atlassian.net/wiki/x/GQDYIQ)
 
-ToDo:
-A list of ToDos
-- Create Nested PriceChangeRule in PriceChangeRuleCollection
-- Validate the range of all DTO inputs
-- Make "NotAllowed" to an expected (non 500) error
-- ggf. PriceChangeExecution einkürzen um die Parameter die auch in PriceChangeOrder stehen
+Kurzfristige ToDos:
+- Logik für PriceChangeRules in den UseCase einbauen
 
-Smaller ToDo:
+Spätere fachliche Optimierungen / ToDo:
 - Include in PriceChangeRule: "valid earliest" // "respect Preisbindungsfristen"
-- Add to model ContractInformation: SignupKwhMargin // SignupBaseMargin
+- Validate the range of all DTO inputs
+- Handle "AgentHintFlag" and "CommunicationFlag"
+
+Spätere technische Optimierungen / ToDo:
+- Make "NotAllowed" to an expected (non 500) error
+

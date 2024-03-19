@@ -18,7 +18,7 @@ type PriceChangeRule struct {
 	ChangeBasePriceNetByFactor float64
 	ChangeKwhPriceNetByFactor  float64
 
-	ValidForProductNames        string
+	ValidForProductName         string
 	ValidForCommodity           string
 	ExcludeOrderDateFrom        time.Time
 	ExcludeStartDateFrom        time.Time
@@ -49,7 +49,7 @@ type CreatePriceChangeRuleRequest struct {
 	ChangeBasePriceNetByFactor float64 `json:"changeBasePriceNetByFactor"`
 	ChangeKwhPriceNetByFactor  float64 `json:"changeKwhPriceNetByFactor"`
 
-	ValidForProductNames        string    `json:"validForProductNames"`
+	ValidForProductName         string    `json:"validForProductName"`
 	ValidForCommodity           string    `json:"validForCommodity" validate:"required"`
 	ExcludeOrderDateFrom        time.Time `json:"excludeOrderDateFrom"`
 	ExcludeStartDateFrom        time.Time `json:"excludeStartDateFrom"`
@@ -93,7 +93,7 @@ func PriceChangeRuleFromDomain(c *domain.PriceChangeRule) PriceChangeRule {
 		ChangeKwhPriceNetByAmount:        c.ChangeKwhPriceNetToAmount,
 		ChangeBasePriceNetByFactor:       c.ChangeBasePriceNetByFactor,
 		ChangeKwhPriceNetByFactor:        c.ChangeKwhPriceNetByFactor,
-		ValidForProductNames:             c.ValidForProductNames,
+		ValidForProductName:              c.ValidForProductName,
 		ValidForCommodity:                c.ValidForCommodity,
 		ExcludeOrderDateFrom:             c.ExcludeOrderDateFrom,
 		ExcludeStartDateFrom:             c.ExcludeStartDateFrom,

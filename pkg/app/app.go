@@ -35,6 +35,7 @@ func Run(cfg *Config, lg logger.Logger) error {
 	contractInformationListerUseCase := contractInformationUsecases.NewLister(store)
 	contractInformationFinderUseCase := contractInformationUsecases.NewFinder(store)
 	contractInformationImporterUseCase := contractInformationUsecases.NewImporter(store)
+	contractInformationGetterUseCase := contractInformationUsecases.NewGetter(store)
 
 	priceChangeRuleCollectionListerUseCase := priceChangeRuleCollectionUsecases.NewLister(store)
 	priceChangeRuleCollectionCreaterUseCase := priceChangeRuleCollectionUsecases.NewCreator(store)
@@ -71,7 +72,7 @@ func Run(cfg *Config, lg logger.Logger) error {
 	)
 
 	customerHandler := handler.NewCustomer(customerCreateUsecase, customerLoaderUsecase, customerFinderUsecase, lg)
-	contractInformationHandler := handler.NewContractInformation(contractInformationCreateUseCase, contractInformationListerUseCase, contractInformationFinderUseCase, contractInformationImporterUseCase, lg)
+	contractInformationHandler := handler.NewContractInformation(contractInformationCreateUseCase, contractInformationListerUseCase, contractInformationFinderUseCase, contractInformationImporterUseCase, contractInformationGetterUseCase, lg)
 	priceChangeRuleCollectionHandler := handler.NewPriceChangeRuleCollection(priceChangeRuleCollectionListerUseCase, priceChangeRuleCollectionCreaterUseCase, priceChangeRuleCollectionExecuterUseCase, priceChangeRuleCollectionGetterUseCase, lg)
 	priceChangeRuleHandler := handler.NewPriceChangeRule(priceChangeRuleListerUseCase, priceChangeRuleCreaterUseCase, priceChangeRuleRemoverUseCase, lg)
 	priceChangeOrderHandler := handler.NewPriceChangeOrder(priceChangeOrderCreateUseCase, priceChangeOrderListerUseCase, priceChangeOrderFinderUseCase, priceChangeOrderExecuteUseCase, lg)
@@ -97,6 +98,7 @@ func Run(cfg *Config, lg logger.Logger) error {
 
 	contractInformationGroup := v1.Group("/contractinformation")
 	contractInformationGroup.GET("", contractInformationHandler.List)
+	contractInformationGroup.GET("/:id", contractInformationHandler.Get)
 	contractInformationGroup.GET("/find", contractInformationHandler.Find)
 	contractInformationGroup.POST("", contractInformationHandler.Create)
 	contractInformationGroup.POST("/import", contractInformationHandler.Import)

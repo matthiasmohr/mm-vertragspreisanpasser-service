@@ -70,6 +70,8 @@ func (imp *Importer) Import(ctx context.Context, logEntry logger.Entry, req *dto
 			contractFile[i].PriceChangePlanned,
 
 			contractFile[i].PriceValidSince,
+			contractFile[i].SignupBaseMargin,
+			contractFile[i].SignupKwhMargin,
 			contractFile[i].CurrentBaseCosts,
 			contractFile[i].CurrentKwhCosts,
 			contractFile[i].CurrentBaseMargin,

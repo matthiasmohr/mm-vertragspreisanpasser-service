@@ -6,10 +6,10 @@ import (
 )
 
 type PriceChangeOrder struct {
-	Id                    string
-	Created_at            time.Time
-	PriceChangeRuleId     string
-	ContractInformationId string
+	Id                          string
+	Created_at                  time.Time
+	PriceChangeRuleCollectionId string
+	ContractInformationId       string
 
 	ProductSerialNumber string
 	Status              string
@@ -37,9 +37,9 @@ type PriceChangeOrder struct {
 }
 
 type CreatePriceChangeOrderRequest struct {
-	//PriceChangeRule string `json:"priceChangeRule"`
-	ContractInformationId string `json:"contractInformationId" validate:"required"`
-	ProductSerialNumber   string `json:"productSerialNumber" validate:"required"`
+	PriceChangeRuleCollectionId string `json:"priceChangeRuleCollectionId"`
+	ContractInformationId       string `json:"contractInformationId" validate:"required"`
+	ProductSerialNumber         string `json:"productSerialNumber" validate:"required"`
 
 	PriceValidSince     time.Time `json:"priceValidSince" validate:"required"`
 	CurrentBaseCosts    float64   `json:"currentBaseCosts"`
@@ -98,30 +98,30 @@ type ExecutePriceChangeOrderRequest struct {
 
 func PriceChangeOrderFromDomain(c *domain.PriceChangeOrder) PriceChangeOrder {
 	return PriceChangeOrder{
-		Id:                    c.Id.String(),
-		Created_at:            c.Created_at,
-		PriceChangeRuleId:     c.PriceChangeRuleId.String(),
-		ContractInformationId: c.ContractInformationId.String(),
-		Status:                c.Status.String(),
-		ProductSerialNumber:   c.ProductSerialNumber,
-		PriceValidSince:       c.PriceValidSince,
-		CurrentBaseCosts:      c.CurrentBaseCosts,
-		CurrentKwhCosts:       c.CurrentKwhCosts,
-		CurrentBaseMargin:     c.CurrentBaseMargin,
-		CurrentKwhMargin:      c.CurrentKwhMargin,
-		CurrentBasePriceNet:   c.CurrentBasePriceNet,
-		CurrentKwhPriceNet:    c.CurrentKwhPriceNet,
-		AnnualConsumption:     c.AnnualConsumption,
-		PriceValidAsOf:        c.PriceValidAsOf,
-		FutureBaseCosts:       c.FutureBaseCosts,
-		FutureKwhCosts:        c.FutureKwhCosts,
-		FutureKwhMargin:       c.FutureKwhMargin,
-		FutureBaseMargin:      c.FutureBaseMargin,
-		FutureBasePriceNet:    c.FutureBasePriceNet,
-		FutureKwhPriceNet:     c.FutureKwhPriceNet,
-		AgentHintFlag:         c.AgentHintFlag,
-		AgentHintText:         c.AgentHintText,
-		CommunicationFlag:     c.CommunicationFlag,
-		CommunicationTime:     c.CommunicationTime,
+		Id:                          c.Id.String(),
+		Created_at:                  c.Created_at,
+		PriceChangeRuleCollectionId: c.PriceChangeRuleCollectionId.String(),
+		ContractInformationId:       c.ContractInformationId.String(),
+		Status:                      c.Status.String(),
+		ProductSerialNumber:         c.ProductSerialNumber,
+		PriceValidSince:             c.PriceValidSince,
+		CurrentBaseCosts:            c.CurrentBaseCosts,
+		CurrentKwhCosts:             c.CurrentKwhCosts,
+		CurrentBaseMargin:           c.CurrentBaseMargin,
+		CurrentKwhMargin:            c.CurrentKwhMargin,
+		CurrentBasePriceNet:         c.CurrentBasePriceNet,
+		CurrentKwhPriceNet:          c.CurrentKwhPriceNet,
+		AnnualConsumption:           c.AnnualConsumption,
+		PriceValidAsOf:              c.PriceValidAsOf,
+		FutureBaseCosts:             c.FutureBaseCosts,
+		FutureKwhCosts:              c.FutureKwhCosts,
+		FutureKwhMargin:             c.FutureKwhMargin,
+		FutureBaseMargin:            c.FutureBaseMargin,
+		FutureBasePriceNet:          c.FutureBasePriceNet,
+		FutureKwhPriceNet:           c.FutureKwhPriceNet,
+		AgentHintFlag:               c.AgentHintFlag,
+		AgentHintText:               c.AgentHintText,
+		CommunicationFlag:           c.CommunicationFlag,
+		CommunicationTime:           c.CommunicationTime,
 	}
 }

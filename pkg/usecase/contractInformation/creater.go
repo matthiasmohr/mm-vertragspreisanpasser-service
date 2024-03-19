@@ -39,6 +39,8 @@ func (c *Creator) Create(ctx context.Context, logEntry logger.Entry, req *dto.Cr
 		req.PriceChangePlanned,
 
 		req.PriceValidSince,
+		req.SignupBaseMargin,
+		req.SignupKwhMargin,
 		req.CurrentBaseCosts,
 		req.CurrentKwhCosts,
 		req.CurrentBaseMargin,
